@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Admin sign in — Olysea</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fbf0dc;--ink:#12163f;--mute:#454c75;--line:rgba(18,22,63,.18);--blue:#8ecbff;--lav:#c4b0ff;--pink:#ff9ecb;--violet:#9d8cff;--paper:#fffaf0;--royal:#3a52ff;--fd:'Bricolage Grotesque',Arial,sans-serif;--fb:'DM Sans',system-ui,sans-serif;--ease:cubic-bezier(.2,.7,.2,1)}
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0}
+body{min-height:100svh;height:100svh;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--fb);overflow:hidden}
+button,input{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--royal);outline-offset:4px}
+.page{min-height:100svh;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(400px,.92fr);position:relative;isolation:isolate}
+.ambient{position:absolute;inset:0;overflow:hidden;z-index:-1;pointer-events:none}
+.blob{position:absolute;border:2px solid var(--ink);border-radius:42% 58% 63% 37%/42% 40% 60% 58%;animation:float 12s ease-in-out infinite}
+.blob.one{width:clamp(220px,32vw,470px);height:clamp(220px,32vw,470px);right:5%;top:8%;background:var(--lav);transform:rotate(15deg)}
+.blob.two{width:clamp(120px,17vw,240px);height:clamp(120px,17vw,240px);left:27%;bottom:7%;background:var(--pink);animation-delay:-4s}
+.blob.three{width:76px;height:76px;left:7%;top:18%;border-radius:50%;background:var(--blue);animation:orbit 16s linear infinite}
+@keyframes float{0%,100%{translate:0 0;rotate:0deg;border-radius:42% 58% 63% 37%/42% 40% 60% 58%}50%{translate:0 -18px;rotate:8deg;border-radius:57% 43% 40% 60%/55% 60% 40% 45%}}
+@keyframes orbit{to{transform:rotate(360deg) translateX(24px) rotate(-360deg)}}
+.left{padding:clamp(28px,5vw,76px);display:flex;flex-direction:column;justify-content:space-between;min-height:100svh;position:relative}
+.brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;width:max-content;font:800 27px/1 var(--fd);letter-spacing:-.045em}
+.mark{width:36px;height:36px;display:grid;place-items:center;background:var(--blue);border:2px solid var(--ink);border-radius:50%;box-shadow:3px 3px 0 var(--ink)}
+.mark svg{width:25px;height:25px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--ink);background:var(--paper);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--royal);box-shadow:0 0 0 4px #3a52ff20;animation:pulse 1.7s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 8px #3a52ff08;transform:scale(.82)}}
+.story{max-width:680px;padding:8vh 0 10vh;animation:rise .8s var(--ease) both}
+h1{font:800 clamp(48px,7.4vw,108px)/.91 var(--fd);letter-spacing:-.065em;margin:24px 0 25px;max-width:720px}
+h1 .highlight{display:inline-block;position:relative;background:var(--blue);border:2px solid var(--ink);padding:0 .13em .08em;transform:rotate(-2deg);box-shadow:5px 5px 0 var(--ink)}
+.story p{max-width:48ch;color:var(--mute);font-size:clamp(16px,1.5vw,20px)}
+.art{position:relative;height:clamp(145px,21vw,270px);max-width:530px;margin-top:40px}
+.art-card{position:absolute;border:2px solid var(--ink);box-shadow:7px 7px 0 var(--ink);background:var(--paper);border-radius:8px}
+.art-card.back{width:44%;height:73%;right:5%;top:8%;transform:rotate(8deg);background:var(--pink);animation:cardfloat 5s ease-in-out infinite}
+.art-card.front{width:64%;height:85%;left:5%;top:0;transform:rotate(-4deg);padding:17px;animation:cardfloat 5.5s ease-in-out infinite reverse}
+.art-top{display:flex;gap:5px;border-bottom:1.5px solid var(--ink);padding-bottom:12px}
+.art-top i{display:block;width:9px;height:9px;border:1.5px solid var(--ink);border-radius:50%;background:var(--pink)}
+.art-top i:nth-child(2){background:var(--blue)}.art-top i:nth-child(3){background:var(--lav)}
+.art-lines{display:grid;gap:9px;margin-top:17px}.art-lines b{height:10px;background:var(--lav);border:1px solid var(--ink);border-radius:3px}.art-lines b:nth-child(1){width:74%;height:17px;background:var(--blue)}.art-lines b:nth-child(2){width:94%}.art-lines b:nth-child(3){width:57%;background:var(--pink)}
+.art-sticker{position:absolute;right:7%;bottom:0;width:86px;height:86px;background:var(--royal);color:#fff;border:2px solid var(--ink);border-radius:50%;display:grid;place-items:center;font:800 26px var(--fd);transform:rotate(12deg);box-shadow:4px 4px 0 var(--ink);animation:spin 18s linear infinite}
+@keyframes cardfloat{50%{translate:0 -8px}}@keyframes spin{to{rotate:360deg}}
+.foot{font-size:12px;color:var(--mute);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.copyright{position:fixed;z-index:5;left:0;right:0;bottom:0;padding:9px 16px max(9px,env(safe-area-inset-bottom));text-align:center;font-size:12px;line-height:1.25;color:var(--mute);background:rgba(251,240,220,.94);pointer-events:none}
+.right{display:grid;place-items:center;padding:clamp(22px,5vw,76px);position:relative}
+.login-card{width:min(100%,470px);background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:clamp(25px,4vw,45px);box-shadow:12px 12px 0 var(--ink);animation:rise .75s .12s var(--ease) both;position:relative}
+.login-card:before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:linear-gradient(90deg,var(--blue) 0 34%,var(--lav) 34% 67%,var(--pink) 67%);border-radius:9px 9px 0 0}
+.lock-icon{width:53px;height:53px;display:grid;place-items:center;background:var(--lav);border:1.5px solid var(--ink);border-radius:10px;margin-bottom:24px;transform:rotate(-4deg)}
+.lock-icon svg{width:26px;height:26px}
+h2{font:800 clamp(32px,3vw,42px)/1 var(--fd);letter-spacing:-.045em;margin:0 0 10px}
+.sub{color:var(--mute);margin:0 0 30px;font-size:15px}
+.field{margin:0 0 19px}
+label{display:flex;justify-content:space-between;align-items:center;gap:12px;font-weight:700;font-size:13px;margin-bottom:8px}
+input{width:100%;min-height:54px;border:1.5px solid var(--ink);border-radius:5px;background:#fffdf8;color:var(--ink);padding:14px 15px;transition:border-color .2s,box-shadow .2s,transform .2s}
+input::placeholder{color:#777d9a}
+input:focus{outline:none;border-color:var(--royal);box-shadow:4px 4px 0 var(--lav);transform:translate(-1px,-1px)}
+.password-wrap{position:relative}.password-wrap input{padding-right:78px}
+.show-pass{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;padding:7px;color:var(--mute);font-weight:700;font-size:12px;cursor:pointer;border-radius:4px}
+.show-pass:hover{background:#c4b0ff55;color:var(--ink)}
+.show-pass{display:grid;place-items:center;width:38px;height:38px}
+.eye-icon{display:block;width:21px;height:21px}
+.show-pass[aria-pressed="true"] .eye-icon{opacity:.85}
+.row-meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:2px 0 22px;font-size:13px}
+.remember{display:flex;align-items:center;gap:9px;font-weight:500;cursor:pointer}
+.remember input{width:17px;min-height:17px;height:17px;padding:0;accent-color:var(--royal);box-shadow:none;transform:none}
+.forgot{font-weight:700;text-decoration-thickness:1px;text-underline-offset:3px}
+.submit{width:100%;min-height:56px;display:flex;align-items:center;justify-content:center;gap:11px;background:var(--ink);color:#fff;border:1.5px solid var(--ink);border-radius:5px;font-weight:700;cursor:pointer;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s}
+.submit:hover{background:var(--royal);box-shadow:5px 5px 0 var(--pink);transform:translate(-2px,-2px)}
+.submit:active{transform:translate(0,0);box-shadow:none}
+.submit:disabled{opacity:.7;cursor:wait;transform:none;box-shadow:none}
+.arrow{font-size:21px;transition:transform .25s}.submit:hover .arrow{transform:translateX(4px)}
+.message{display:none;margin:15px 0 0;border:1.5px solid #b42318;background:#fff0ee;color:#9f2119;border-radius:5px;padding:11px 12px;font-size:13px;font-weight:600}
+.message.on{display:block;animation:rise .25s var(--ease) both}
+.message.ok{border-color:#16804a;background:#eaf8ef;color:#12643b}
+.secure-note{display:flex;gap:9px;align-items:flex-start;border-top:1px solid var(--line);padding-top:19px;margin-top:23px;color:var(--mute);font-size:12px}
+.secure-note svg{flex:none;margin-top:1px}
+.back{display:inline-flex;align-items:center;gap:8px;margin-top:25px;font-size:13px;font-weight:700;text-decoration:none;color:var(--mute);transition:color .2s,transform .2s}
+.back:hover{color:var(--ink);transform:translateX(-3px)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){.page{height:100svh;min-height:0;grid-template-columns:1fr;grid-template-rows:auto 1fr;overflow:hidden}.left{min-height:0;padding:20px 24px 0}.story{padding:24px 0 0}.story h1{font-size:clamp(38px,7vw,58px);margin:12px 0}.story p{font-size:14px;margin:8px 0}.art{display:none}.foot{display:none}.right{min-height:0;padding:16px 24px 24px;overflow:hidden}.login-card{width:min(100%,470px);padding:26px 30px 22px}.lock-icon{width:42px;height:42px;margin-bottom:15px}.sub{margin-bottom:18px}.field{margin-bottom:13px}input{min-height:48px}.row-meta{margin-bottom:15px}.submit{min-height:49px}.secure-note{margin-top:15px;padding-top:13px}.back{margin-top:14px}.blob.one{right:-7%;top:13%;width:280px;height:280px}.blob.two{left:auto;right:7%;bottom:15%;width:140px;height:140px}}
+@media(max-width:520px){.right{padding-bottom:38px}.left{padding:15px 18px 0}.brand{font-size:22px}.mark{width:31px;height:31px}.story{padding-top:15px}.eyebrow{font-size:10px;padding:5px 10px}h1{font-size:clamp(34px,9.5vw,48px);margin:10px 0}.story p{font-size:13px;margin:6px 0 0}.right{padding:10px 16px 18px}.login-card{padding:24px 19px 18px;box-shadow:6px 6px 0 var(--ink)}.row-meta{align-items:center;font-size:12px}.sub{font-size:13px;margin-bottom:16px}.field{margin-bottom:11px}label{margin-bottom:6px}.secure-note{font-size:11px}.back{margin-top:11px}} 
+@media(max-height:760px) and (min-width:901px){.left{padding-top:25px;padding-bottom:25px}.story{padding:25px 0}.art{height:145px;margin-top:20px}.login-card{padding-top:30px;padding-bottom:25px}.lock-icon{margin-bottom:15px}.sub{margin-bottom:18px}.field{margin-bottom:12px}.secure-note{margin-top:15px;padding-top:13px}.back{margin-top:14px}}
+@media(max-height:680px){.story{padding:12px 0}.story p{font-size:13px}.login-card{padding-top:20px;padding-bottom:18px}.lock-icon{display:none}.sub{margin-bottom:12px}.field{margin-bottom:9px}input{min-height:43px}.row-meta{margin-bottom:10px}.submit{min-height:44px}.secure-note{margin-top:10px;padding-top:9px}.back{margin-top:8px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="ambient" aria-hidden="true"><span class="blob one"></span><span class="blob two"></span><span class="blob three"></span></div>
+  <section class="left" aria-label="Olysea brand">
+    <a class="brand" href="/" aria-label="Olysea home">
+      <span class="mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 19c4-8 8 5 12-3s7-5 12 1" stroke="#12163f" stroke-width="2.5" stroke-linecap="round"/></svg></span>Olysea
+    </a>
+    <div class="story">
+      <h1>Your work.<br>Your <span class="highlight">control.</span></h1>
+      <p>A quieter place to manage the details behind the digital experiences we build.</p>
+      <div class="art" aria-hidden="true">
+        <div class="art-card back"></div>
+        <div class="art-card front"><div class="art-top"><i></i><i></i><i></i></div><div class="art-lines"><b></b><b></b><b></b></div><div style="display:flex;gap:8px;margin-top:17px"><span style="display:block;width:30px;height:30px;border:1.5px solid var(--ink);background:var(--pink);border-radius:50%"></span><span style="display:block;width:30px;height:30px;border:1.5px solid var(--ink);background:var(--blue);border-radius:7px;transform:rotate(8deg)"></span><span style="display:block;width:30px;height:30px;border:1.5px solid var(--ink);background:var(--lav);border-radius:50% 50% 4px 50%"></span></div></div>
+        <div class="art-sticker">O.</div>
+      </div>
+    </div>
+  </section>
+  <section class="right" aria-label="Admin login">
+    <div class="login-card">
+      <div class="lock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4.5" y="10" width="15" height="11" rx="2" stroke="#12163f" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#12163f" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.4" fill="#12163f"/><path d="M12 16.4v1.7" stroke="#12163f" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+      <h2>Welcome back.</h2>
+      <p class="sub">Sign in with your admin credentials to continue.</p>
+      <form id="loginForm" novalidate>
+        <div class="field"><label for="email">Admin email</label><input id="email" name="email" type="email" placeholder="admin@olysea.tech" autocomplete="username" required></div>
+        <div class="field"><label for="password">Password</label><div class="password-wrap"><input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required><button class="show-pass" type="button" id="togglePassword" aria-label="Show password" aria-pressed="false">
+              <svg class="eye-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.4-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.4 6.5-9.5 6.5S2.5 12 2.5 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </button></div></div>
+        <div class="row-meta"><label class="remember"><input type="checkbox" id="remember"> Keep me signed in</label><a class="forgot" href="mailto:hello@olysea.tech?subject=Admin%20access%20help">Need help?</a></div>
+        <button class="submit" id="submit" type="submit"><span id="submitText">Sign in securely</span><span class="arrow" aria-hidden="true">→</span></button>
+        <div class="message" id="message" role="alert" aria-live="polite"></div>
+      </form>
+      <div class="secure-note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 10-4-2.5-7-5.5-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Authorized administrators only. Your sign-in is verified by the Olysea server.</span></div>
+      <a class="back" href="/"><span aria-hidden="true">←</span> Back to Olysea</a>
+    </div>
+  </section>
+  <footer class="copyright">© 2026 Olysea. All rights reserved.</footer>
+</main>
+<script>
+const form=document.getElementById('loginForm'), email=document.getElementById('email'), password=document.getElementById('password');
+const msg=document.getElementById('message'), submit=document.getElementById('submit'), submitText=document.getElementById('submitText');
+document.getElementById('togglePassword').addEventListener('click',function(){
+  const show=password.type==='password';password.type=show?'text':'password';this.setAttribute('aria-pressed',String(show));this.setAttribute('aria-label',show?'Hide password':'Show password');
+});
+function showMessage(text,ok=false){msg.textContent=text;msg.className='message on'+(ok?' ok':'')}
+form.addEventListener('submit',async function(e){
+  e.preventDefault();msg.className='message';msg.textContent='';
+  if(!email.value.trim()||!email.validity.valid){email.focus();showMessage('Enter a valid admin email address.');return}
+  if(!password.value){password.focus();showMessage('Enter your password to continue.');return}
+  submit.disabled=true;submitText.textContent='Verifying…';
+  try{
+    // Connect this endpoint to your server-side authentication before deployment.
+    const response=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},credentials:'same-origin',body:JSON.stringify({email:email.value.trim(),password:password.value,remember:document.getElementById('remember').checked})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data||data.success!==true){
+      showMessage(response.status===401?'That email or password doesn’t match. Please try again.':(data.message||'Sign-in is unavailable right now. Please try again later.'));
+      password.select();return;
+    }
+    showMessage('Signed in successfully. Opening your admin workspace…',true);
+    window.location.assign(data.redirect||'/admin');
+  }catch(err){
+    showMessage('Could not connect to the sign-in service. The server authentication endpoint needs to be configured.');
+  }finally{submit.disabled=false;submitText.textContent='Sign in securely'}
+});
+</script>
+</body>
+</html>
