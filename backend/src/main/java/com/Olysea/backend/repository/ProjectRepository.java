@@ -1,8 +1,9 @@
 
-package com.Olysea.backend.project.repository;
+package com.Olysea.backend.repository;
 
-import com.Olysea.backend.project.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.Olysea.backend.model.Project;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 }

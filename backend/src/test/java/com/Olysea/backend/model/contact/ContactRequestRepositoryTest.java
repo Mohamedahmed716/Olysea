@@ -1,7 +1,9 @@
 
-package com.Olysea.backend.contact;
+package com.Olysea.backend.model.contact;
 
-import com.Olysea.backend.contact.repository.ContactRequestRepository;
+import com.Olysea.backend.model.ContactRequest;
+import com.Olysea.backend.repository.ContactRequestRepository;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
