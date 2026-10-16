@@ -1,5 +1,5 @@
 
-package com.Olysea.backend.contact;
+package com.Olysea.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

@@ -13,8 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.session.ChangeSessionIdAuthenticationStrategy;
-import org.springframework.security.web.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
 @Configuration
@@ -47,44 +47,35 @@ public class SecurityConfig {
             SecurityContextRepository securityContextRepository)
             throws Exception {
 
-        HttpSessionCsrfTokenRepository csrfRepository =
-            new HttpSessionCsrfTokenRepository();
+        HttpSessionCsrfTokenRepository csrfRepository = new HttpSessionCsrfTokenRepository();
 
         csrfRepository.setHeaderName("X-CSRF-TOKEN");
 
         http
-            .securityContext(context -> context
-                .securityContextRepository(securityContextRepository)
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-            )
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(csrfRepository)
-            )
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/auth/csrf",
-                    "/api/admin/login"
-                ).permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/auth/logout").authenticated()
-                .anyRequest().permitAll()
-            )
-            .exceptionHandling(exceptions -> exceptions
-                .authenticationEntryPoint(
-                    new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
-                )
-            )
-            .logout(logout -> logout
-                .logoutUrl("/api/auth/logout")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
-                .logoutSuccessHandler((request, response, authentication) ->
-                    response.setStatus(HttpStatus.NO_CONTENT.value())
-                )
-            );
+                .securityContext(context -> context
+                        .securityContextRepository(securityContextRepository))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(csrfRepository))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/auth/csrf",
+                                "/api/admin/login")
+                        .permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/auth/logout").authenticated()
+                        .anyRequest().permitAll())
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint(
+                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .logoutSuccessHandler((request, response, authentication) -> response
+                                .setStatus(HttpStatus.NO_CONTENT.value())));
 
         return http.build();
     }

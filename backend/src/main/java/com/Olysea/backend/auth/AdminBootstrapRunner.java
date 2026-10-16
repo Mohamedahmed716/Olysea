@@ -6,14 +6,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.Olysea.backend.model.User;
+import com.Olysea.backend.repository.UserRepository;
+
 import java.util.Locale;
 
 @Component
-@ConditionalOnProperty(
-    prefix = "olysea.bootstrap-admin",
-    name = "enabled",
-    havingValue = "true"
-)
+@ConditionalOnProperty(prefix = "olysea.bootstrap-admin", name = "enabled", havingValue = "true")
 public class AdminBootstrapRunner implements CommandLineRunner {
 
     private final UserRepository userRepository;
@@ -34,14 +33,12 @@ public class AdminBootstrapRunner implements CommandLineRunner {
 
         if (email == null || email.isBlank()) {
             throw new IllegalStateException(
-                "ADMIN_EMAIL is required for admin bootstrap"
-            );
+                    "ADMIN_EMAIL is required for admin bootstrap");
         }
 
         if (password == null || password.length() < 16) {
             throw new IllegalStateException(
-                "ADMIN_PASSWORD must contain at least 16 characters"
-            );
+                    "ADMIN_PASSWORD must contain at least 16 characters");
         }
 
         email = email.trim().toLowerCase(Locale.ROOT);
@@ -51,18 +48,16 @@ public class AdminBootstrapRunner implements CommandLineRunner {
         if (existingUser.isPresent()) {
             if (existingUser.get().getRole() != Role.ADMIN) {
                 throw new IllegalStateException(
-                    "The bootstrap email already belongs to a non-admin user"
-                );
+                        "The bootstrap email already belongs to a non-admin user");
             }
 
             return;
         }
 
         User admin = new User(
-            email,
-            passwordEncoder.encode(password),
-            Role.ADMIN
-        );
+                email,
+                passwordEncoder.encode(password),
+                Role.ADMIN);
 
         userRepository.save(admin);
     }

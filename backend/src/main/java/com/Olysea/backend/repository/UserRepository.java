@@ -1,6 +1,8 @@
-package com.Olysea.backend.auth;
+package com.Olysea.backend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.Olysea.backend.model.User;
 
 import java.util.Optional;
 

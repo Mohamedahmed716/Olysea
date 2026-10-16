@@ -11,8 +11,7 @@ public class LoginAttemptService {
     private static final int MAX_ATTEMPTS = 5;
     private static final long WINDOW_SECONDS = 900;
 
-    private final ConcurrentHashMap<String, AttemptWindow> attempts =
-        new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, AttemptWindow> attempts = new ConcurrentHashMap<>();
 
     public boolean isBlocked(String key) {
         AttemptWindow window = attempts.get(key);
@@ -50,8 +49,7 @@ public class LoginAttemptService {
     }
 
     private boolean expired(AttemptWindow window) {
-        return Instant.now().getEpochSecond() - window.startedAt
-            >= WINDOW_SECONDS;
+        return Instant.now().getEpochSecond() - window.startedAt >= WINDOW_SECONDS;
     }
 
     private static class AttemptWindow {

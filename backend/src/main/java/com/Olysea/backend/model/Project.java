@@ -1,5 +1,5 @@
 
-package com.Olysea.backend.service;
+package com.Olysea.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -10,11 +10,11 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "services")
+@Table(name = "projects")
 @Getter
 @Setter
 @NoArgsConstructor
-public class OlyseaService {
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,12 @@ public class OlyseaService {
     @NotBlank
     @Column(nullable = false, length = 2000)
     private String description;
+
+    @Column(name = "image_url", length = 2048)
+    private String imageUrl;
+
+    @Column(name = "project_url", length = 2048)
+    private String projectUrl;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

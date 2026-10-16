@@ -1,7 +1,9 @@
 
-package com.Olysea.backend.service;
+package com.Olysea.backend.model.service;
 
-import com.Olysea.backend.service.repository.OlyseaServiceRepository;
+import com.Olysea.backend.model.OlyseaService;
+import com.Olysea.backend.repository.OlyseaServiceRepository;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

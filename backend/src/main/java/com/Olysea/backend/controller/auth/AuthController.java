@@ -1,4 +1,4 @@
-package com.Olysea.backend.auth;
+package com.Olysea.backend.controller.auth;
 
 import com.Olysea.backend.auth.dto.LoginRequest;
 import com.Olysea.backend.auth.dto.LoginResponse;
@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -16,7 +15,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,39 +50,33 @@ public class AuthController {
 
         try {
             Authentication authentication = authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken.unauthenticated(
-                    request.email().trim(),
-                    request.password()
-                )
-            );
+                    UsernamePasswordAuthenticationToken.unauthenticated(
+                            request.email().trim(),
+                            request.password()));
 
             sessionAuthenticationStrategy.onAuthentication(
-                authentication,
-                httpRequest,
-                httpResponse
-            );
+                    authentication,
+                    httpRequest,
+                    httpResponse);
 
-            SecurityContext context =
-                SecurityContextHolder.createEmptyContext();
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
 
             context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
 
             securityContextRepository.saveContext(
-                context,
-                httpRequest,
-                httpResponse
-            );
+                    context,
+                    httpRequest,
+                    httpResponse);
 
             return ResponseEntity.ok(
-                new LoginResponse(true, "Login successful")
-            );
+                    new LoginResponse(true, "Login successful"));
 
         } catch (AuthenticationException exception) {
             SecurityContextHolder.clearContext();
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new LoginResponse(false, "Invalid email or password"));
+                    .body(new LoginResponse(false, "Invalid email or password"));
         }
     }
 }
