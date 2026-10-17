@@ -1,8 +1,9 @@
 package com.Olysea.backend.controller.auth;
 
 import com.Olysea.backend.auth.LoginAttemptService;
-import com.Olysea.backend.auth.dto.LoginRequest;
-import com.Olysea.backend.auth.dto.LoginResponse;
+import com.Olysea.backend.controller.auth.dto.LoginRequest;
+import com.Olysea.backend.controller.auth.dto.LoginResponse;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
