@@ -59,7 +59,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/auth/csrf", "/api/admin/login").permitAll()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/api/auth/logout").authenticated()
+                                                .requestMatchers("/api/auth/logout", "/api/projects/**").authenticated()
                                                 .anyRequest().permitAll())
                                 .exceptionHandling(exceptions -> exceptions
                                                 .authenticationEntryPoint(

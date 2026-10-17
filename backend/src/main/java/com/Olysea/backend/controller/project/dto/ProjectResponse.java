@@ -1,5 +1,13 @@
+
 package com.Olysea.backend.controller.project.dto;
 
-public class ProjectResponse {
+import java.time.LocalDateTime;
 
+public record ProjectResponse(
+        Long id,
+        String title,
+        String description,
+        String imageUrl,
+        String projectUrl,
+        LocalDateTime createdAt) {
 }
