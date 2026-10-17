@@ -7,67 +7,54 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@ActiveProfiles("test")
 class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
     @BeforeEach
-    void setUp() {
+    void cleanDatabase() {
         userRepository.deleteAll();
     }
 
     @Test
     void shouldSaveUser() {
-        User user = createUser("admin@olysea.tech");
+        User saved = userRepository.saveAndFlush(
+                new User("Admin@Olysea.test", "test-hash", Role.ADMIN));
 
-        User savedUser = userRepository.saveAndFlush(user);
-
-        assertNotNull(savedUser.getId());
-        assertEquals("admin@olysea.tech", savedUser.getEmail());
-    }
-
-    @Test
-    void shouldFindUserByEmail() {
-        userRepository.saveAndFlush(createUser("admin@olysea.tech"));
-
-        Optional<User> foundUser = userRepository.findByEmailIgnoreCase("admin@olysea.tech");
-
-        assertTrue(foundUser.isPresent());
-        assertEquals("admin@olysea.tech", foundUser.get().getEmail());
+        assertThat(saved.getId()).isNotNull();
+        assertThat(saved.getEmail()).isEqualTo("admin@olysea.test");
+        assertThat(saved.getRole()).isEqualTo(Role.ADMIN);
+        assertThat(saved.isEnabled()).isTrue();
     }
 
     @Test
     void shouldFindUserByEmailIgnoringCase() {
-        userRepository.saveAndFlush(createUser("admin@olysea.tech"));
+        userRepository.saveAndFlush(new User("admin@olysea.test", "test-hash", Role.ADMIN));
 
-        Optional<User> foundUser = userRepository.findByEmailIgnoreCase("ADMIN@OLYSEA.TECH");
+        Optional<User> result = userRepository.findByEmailIgnoreCase("ADMIN@OLYSEA.TEST");
 
-        assertTrue(foundUser.isPresent());
+        assertThat(result).isPresent();
     }
 
     @Test
     void shouldReturnEmptyWhenEmailDoesNotExist() {
-        Optional<User> foundUser = userRepository.findByEmailIgnoreCase("unknown@olysea.tech");
-
-        assertTrue(foundUser.isEmpty());
+        assertThat(userRepository.findByEmailIgnoreCase("missing@olysea.test")).isEmpty();
     }
 
     @Test
-    void shouldCheckWhetherEmailExists() {
-        userRepository.saveAndFlush(createUser("admin@olysea.tech"));
+    void shouldCheckWhetherEmailExistsIgnoringCase() {
+        userRepository.saveAndFlush(new User("admin@olysea.test", "test-hash", Role.ADMIN));
 
-        assertTrue(userRepository.existsByEmailIgnoreCase("admin@olysea.tech"));
-        assertFalse(userRepository.existsByEmailIgnoreCase("unknown@olysea.tech"));
-    }
-
-    private User createUser(String email) {
-        return new User(email, "test-hashed-password", Role.ADMIN);
+        assertThat(userRepository.existsByEmailIgnoreCase("ADMIN@OLYSEA.TEST")).isTrue();
+        assertThat(userRepository.existsByEmailIgnoreCase("missing@olysea.test")).isFalse();
     }
 }

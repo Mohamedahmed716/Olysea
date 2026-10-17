@@ -2,52 +2,48 @@ package com.Olysea.backend.auth;
 
 import com.Olysea.backend.model.User;
 import com.Olysea.backend.repository.UserRepository;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class AuthSecurityIntegrationTest {
 
-        private static final String EMAIL = "test-admin@olysea.test";
-        private static final String PASSWORD = "Test-Only-Password-123!";
+        private static final String EMAIL = "admin@olysea.test";
+        private static final String PASSWORD = "Correct-Test-Password-123!";
 
         @Autowired
         private MockMvc mockMvc;
-
         @Autowired
         private UserRepository userRepository;
-
         @Autowired
         private PasswordEncoder passwordEncoder;
-
         @Autowired
-        private ObjectMapper objectMapper;
+        private LoginAttemptService loginAttemptService;
 
         @BeforeEach
         void setUp() {
-                userRepository.findByEmailIgnoreCase(EMAIL)
-                                .ifPresent(userRepository::delete);
-
-                userRepository.save(
-                                new User(
-                                                EMAIL,
-                                                passwordEncoder.encode(PASSWORD),
-                                                Role.ADMIN));
+                userRepository.deleteAll();
+                loginAttemptService.recordSuccess("ip:127.0.0.1");
+                loginAttemptService.recordSuccess("email:" + sha256(EMAIL));
+                userRepository.saveAndFlush(new User(EMAIL, passwordEncoder.encode(PASSWORD), Role.ADMIN));
         }
 
         @Test
@@ -57,92 +53,109 @@ class AuthSecurityIntegrationTest {
         }
 
         @Test
-        void validCredentialsCreateAuthenticatedSession() throws Exception {
-                MockHttpSession session = login(EMAIL, PASSWORD);
-
-                mockMvc.perform(
-                                get("/api/admin/me").session(session))
-                                .andExpect(status().isOk());
+        void invalidLoginReturnsUnauthorized() throws Exception {
+                mockMvc.perform(post("/api/admin/login")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson(EMAIL, "wrong-password")))
+                                .andExpect(status().isUnauthorized())
+                                .andExpect(jsonPath("$.success").value(false));
         }
 
         @Test
-        void invalidCredentialsAreRejected() throws Exception {
-                MockHttpSession session = getCsrfSession();
+        void loginWithoutCsrfIsRejected() throws Exception {
+                mockMvc.perform(post("/api/admin/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson(EMAIL, PASSWORD)))
+                                .andExpect(status().isForbidden());
+        }
 
-                String token = csrfToken(session);
+        @Test
+        void validLoginCanAccessAdminApiAndLogoutInvalidatesSession() throws Exception {
+                MockHttpSession anonymousSession = new MockHttpSession();
+                String anonymousSessionId = anonymousSession.getId();
 
-                mockMvc.perform(
-                                post("/api/admin/login")
-                                                .session(session)
-                                                .header("X-CSRF-TOKEN", token)
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .content("""
-                                                                {
-                                                                  "email": "test-admin@olysea.test",
-                                                                  "password": "wrong-password"
-                                                                }
-                                                                """))
+                MvcResult loginResult = mockMvc.perform(post("/api/admin/login")
+                                .session(anonymousSession)
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson(EMAIL, PASSWORD)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.success").value(true))
+                                .andReturn();
+
+                MockHttpSession session = (MockHttpSession) loginResult.getRequest().getSession(false);
+                org.assertj.core.api.Assertions.assertThat(session).isNotNull();
+                org.assertj.core.api.Assertions.assertThat(session.getId())
+                                .isNotEqualTo(anonymousSessionId);
+
+                mockMvc.perform(get("/api/admin/me").session(session))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.email").value(EMAIL))
+                                .andExpect(jsonPath("$.roles[0]").value("ROLE_ADMIN"));
+
+                mockMvc.perform(post("/api/auth/logout").session(session).with(csrf()))
+                                .andExpect(status().isNoContent());
+
+                mockMvc.perform(get("/api/admin/me").session(session))
                                 .andExpect(status().isUnauthorized());
         }
 
         @Test
-        void loginWithoutCsrfTokenIsRejected() throws Exception {
-                MockHttpSession session = getCsrfSession();
+        void disabledAccountCannotLogin() throws Exception {
+                userRepository.deleteAll();
+                User disabled = new User(EMAIL, passwordEncoder.encode(PASSWORD), Role.ADMIN);
+                disabled.disable();
+                userRepository.saveAndFlush(disabled);
 
-                mockMvc.perform(
-                                post("/api/admin/login")
-                                                .session(session)
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .content("""
-                                                                {
-                                                                  "email": "test-admin@olysea.test",
-                                                                  "password": "Test-Only-Password-123!"
-                                                                }
-                                                                """))
+                mockMvc.perform(post("/api/admin/login")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson(EMAIL, PASSWORD)))
+                                .andExpect(status().isUnauthorized())
+                                .andExpect(jsonPath("$.success").value(false));
+        }
+
+        @Test
+        void nonAdminRoleCannotAccessAdminApi() throws Exception {
+                mockMvc.perform(get("/api/admin/me").with(user("ordinary-user").roles("USER")))
                                 .andExpect(status().isForbidden());
         }
 
-        private MockHttpSession login(String email, String password)
-                        throws Exception {
+        @Test
+        void repeatedFailedLoginsAreRateLimited() throws Exception {
+                for (int i = 0; i < LoginAttemptService.MAX_ATTEMPTS; i++) {
+                        mockMvc.perform(post("/api/admin/login")
+                                        .with(csrf())
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .content(loginJson(EMAIL, "wrong-password")))
+                                        .andExpect(status().isUnauthorized());
+                }
 
-                MockHttpSession session = getCsrfSession();
-                String token = csrfToken(session);
-
-                String body = objectMapper.writeValueAsString(
-                                java.util.Map.of(
-                                                "email", email,
-                                                "password", password));
-
-                mockMvc.perform(
-                                post("/api/admin/login")
-                                                .session(session)
-                                                .header("X-CSRF-TOKEN", token)
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .content(body))
-                                .andExpect(status().isOk());
-
-                return session;
+                mockMvc.perform(post("/api/admin/login")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson(EMAIL, PASSWORD)))
+                                .andExpect(status().isTooManyRequests());
         }
 
-        private MockHttpSession getCsrfSession() throws Exception {
-                MvcResult result = mockMvc.perform(
-                                get("/api/auth/csrf"))
-                                .andExpect(status().isOk())
-                                .andReturn();
-
-                return (MockHttpSession) result.getRequest()
-                                .getSession(false);
+        private String loginJson(String email, String password) {
+                return "{\"email\":\"" + escapeJson(email) + "\",\"password\":\"" + escapeJson(password) + "\"}";
         }
 
-        private String csrfToken(MockHttpSession session) throws Exception {
-                MvcResult result = mockMvc.perform(
-                                get("/api/auth/csrf").session(session))
-                                .andExpect(status().isOk())
-                                .andReturn();
-
-                JsonNode json = objectMapper.readTree(
-                                result.getResponse().getContentAsString());
-
-                return json.get("token").asText();
+        private String escapeJson(String value) {
+                return value.replace("\\", "\\\\").replace("\"", "\\\"");
         }
+
+        private String sha256(String value) {
+                try {
+                        byte[] digest = java.security.MessageDigest.getInstance("SHA-256")
+                                        .digest(value.toLowerCase(java.util.Locale.ROOT)
+                                                        .getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                        return java.util.HexFormat.of().formatHex(digest);
+                } catch (java.security.NoSuchAlgorithmException exception) {
+                        throw new IllegalStateException(exception);
+                }
+        }
+
 }
