@@ -1,4 +1,4 @@
-package com.Olysea.backend.auth;
+package com.Olysea.backend.common.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,7 +59,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers("/api/auth/csrf", "/api/admin/login").permitAll()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/api/auth/logout").authenticated()
+                                                .requestMatchers("/api/auth/logout", "/api/projects/**").authenticated()
                                                 .anyRequest().permitAll())
                                 .exceptionHandling(exceptions -> exceptions
                                                 .authenticationEntryPoint(
