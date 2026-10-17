@@ -15,14 +15,12 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Locale;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(name = "uk_users_email", columnNames = "email")
@@ -72,6 +70,14 @@ public class User {
     protected void onUpdate() {
         email = normalizeEmail(email);
         updatedAt = LocalDateTime.now();
+    }
+
+    public void disable() {
+        this.enabled = false;
+    }
+
+    public void enable() {
+        this.enabled = true;
     }
 
     private static String normalizeEmail(String email) {
