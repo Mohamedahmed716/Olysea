@@ -1,14 +1,14 @@
 
 package com.Olysea.backend.service.contact;
 
+import com.Olysea.backend.common.exception.ResourceNotFoundException;
 import com.Olysea.backend.controller.contact.dto.ContactMessageRequest;
 import com.Olysea.backend.controller.contact.dto.ContactMessageResponse;
 import com.Olysea.backend.model.ContactRequest;
 import com.Olysea.backend.repository.ContactRequestRepository;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -29,9 +29,11 @@ public class ContactService {
         ContactRequest contact = new ContactRequest();
         contact.setName(request.name().trim());
         contact.setEmail(request.email().trim());
+
         if (request.subject() != null) {
-            contact.setSubject(request.subject().trim());
+            contact.setSubject(normalizeSubject(request.subject()));
         }
+
         contact.setMessage(request.message().trim());
 
         ContactRequest saved = contactRepository.save(contact);
@@ -58,13 +60,12 @@ public class ContactService {
 
     private ContactRequest findContact(Long id) {
         return contactRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Contact message not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Contact message not found."));
     }
 
     private String normalizeSubject(String subject) {
-        if (subject == null || subject.isBlank()) {
+        if (subject.isBlank()) {
             return null;
         }
 

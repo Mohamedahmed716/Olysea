@@ -1,14 +1,14 @@
 
 package com.Olysea.backend.service.project;
 
-import com.Olysea.backend.model.Project;
+import com.Olysea.backend.common.exception.ResourceNotFoundException;
 import com.Olysea.backend.controller.project.dto.ProjectRequest;
 import com.Olysea.backend.controller.project.dto.ProjectResponse;
+import com.Olysea.backend.model.Project;
 import com.Olysea.backend.repository.ProjectRepository;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -47,7 +47,10 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectResponse updateProject(Long id, ProjectRequest request) {
+    public ProjectResponse updateProject(
+            Long id,
+            ProjectRequest request) {
+
         Project project = findProject(id);
 
         project.setTitle(request.title().trim());
@@ -66,9 +69,8 @@ public class ProjectService {
 
     private Project findProject(Long id) {
         return projectRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Project not found."));
     }
 
     private ProjectResponse toResponse(Project project) {

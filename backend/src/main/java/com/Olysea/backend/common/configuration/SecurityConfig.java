@@ -1,3 +1,4 @@
+
 package com.Olysea.backend.common.configuration;
 
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.session.ChangeSessionIdAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -44,7 +44,8 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(
                         HttpSecurity http,
-                        SecurityContextRepository securityContextRepository) throws Exception {
+                        SecurityContextRepository securityContextRepository,
+                        ApiSecurityErrorHandler apiSecurityErrorHandler) throws Exception {
 
                 HttpSessionCsrfTokenRepository csrfRepository = new HttpSessionCsrfTokenRepository();
                 csrfRepository.setHeaderName("X-CSRF-TOKEN");
@@ -55,18 +56,24 @@ public class SecurityConfig {
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                                                 .sessionFixation(fixation -> fixation.changeSessionId()))
-                                .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository))
+                                .csrf(csrf -> csrf
+                                                .csrfTokenRepository(csrfRepository))
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/api/projects/**", "/api/services/**",
+                                                .requestMatchers(
+                                                                "/api/projects/**",
+                                                                "/api/services/**",
                                                                 "/api/contact/**")
                                                 .permitAll()
-                                                .requestMatchers("/api/auth/csrf", "/api/admin/login").permitAll()
+                                                .requestMatchers(
+                                                                "/api/auth/csrf",
+                                                                "/api/admin/login")
+                                                .permitAll()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                                 .requestMatchers("/api/auth/logout").authenticated()
                                                 .anyRequest().permitAll())
                                 .exceptionHandling(exceptions -> exceptions
-                                                .authenticationEntryPoint(
-                                                                new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+                                                .authenticationEntryPoint(apiSecurityErrorHandler)
+                                                .accessDeniedHandler(apiSecurityErrorHandler))
                                 .logout(logout -> logout
                                                 .logoutUrl("/api/auth/logout")
                                                 .invalidateHttpSession(true)

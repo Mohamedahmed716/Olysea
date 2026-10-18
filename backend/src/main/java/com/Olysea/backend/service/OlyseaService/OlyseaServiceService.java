@@ -1,14 +1,14 @@
 
 package com.Olysea.backend.service.OlyseaService;
 
+import com.Olysea.backend.common.exception.ResourceNotFoundException;
 import com.Olysea.backend.controller.OlyseaService.dto.OlyseaServiceRequest;
 import com.Olysea.backend.controller.OlyseaService.dto.OlyseaServiceResponse;
 import com.Olysea.backend.model.OlyseaService;
 import com.Olysea.backend.repository.OlyseaServiceRepository;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -36,7 +36,9 @@ public class OlyseaServiceService {
     }
 
     @Transactional
-    public OlyseaServiceResponse createService(OlyseaServiceRequest request) {
+    public OlyseaServiceResponse createService(
+            OlyseaServiceRequest request) {
+
         OlyseaService service = new OlyseaService();
 
         service.setTitle(request.title().trim());
@@ -70,9 +72,8 @@ public class OlyseaServiceService {
 
     private OlyseaService findService(Long id) {
         return serviceRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Service not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Service not found."));
     }
 
     private OlyseaServiceResponse toResponse(OlyseaService service) {
