@@ -1,13 +1,14 @@
+
 package com.Olysea.backend.auth;
+
+import com.Olysea.backend.model.User;
+import com.Olysea.backend.repository.UserRepository;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.Olysea.backend.model.User;
-import com.Olysea.backend.repository.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -22,7 +23,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) {
         User user = userRepository.findByEmailIgnoreCase(email.trim())
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid email or password"));
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Invalid email or password"));
 
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())

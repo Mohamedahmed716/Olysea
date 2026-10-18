@@ -1,13 +1,15 @@
+
 package com.Olysea.backend.controller.auth;
 
 import com.Olysea.backend.auth.LoginAttemptService;
+import com.Olysea.backend.common.exception.TooManyRequestsException;
 import com.Olysea.backend.controller.auth.dto.LoginRequest;
 import com.Olysea.backend.controller.auth.dto.LoginResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -63,30 +65,46 @@ public class AuthController {
         String ipKey = "ip:" + httpRequest.getRemoteAddr();
         String emailKey = "email:" + sha256(email);
 
-        if (loginAttemptService.isBlocked(ipKey) || loginAttemptService.isBlocked(emailKey)) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(new LoginResponse(false, "Too many login attempts. Try again later."));
+        if (loginAttemptService.isBlocked(ipKey)
+                || loginAttemptService.isBlocked(emailKey)) {
+            throw new TooManyRequestsException(
+                    "Too many login attempts. Try again later.");
         }
 
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    UsernamePasswordAuthenticationToken.unauthenticated(email, request.password()));
+                    UsernamePasswordAuthenticationToken.unauthenticated(
+                            email,
+                            request.password()));
 
-            sessionAuthenticationStrategy.onAuthentication(authentication, httpRequest, httpResponse);
+            sessionAuthenticationStrategy.onAuthentication(
+                    authentication,
+                    httpRequest,
+                    httpResponse);
+
             SecurityContext context = SecurityContextHolder.createEmptyContext();
+
             context.setAuthentication(authentication);
             SecurityContextHolder.setContext(context);
-            securityContextRepository.saveContext(context, httpRequest, httpResponse);
+
+            securityContextRepository.saveContext(
+                    context,
+                    httpRequest,
+                    httpResponse);
 
             loginAttemptService.recordSuccess(ipKey);
             loginAttemptService.recordSuccess(emailKey);
-            return ResponseEntity.ok(new LoginResponse(true, "Login successful"));
+
+            return ResponseEntity.ok(
+                    new LoginResponse(true, "Login successful"));
+
         } catch (AuthenticationException exception) {
             SecurityContextHolder.clearContext();
+
             loginAttemptService.recordFailure(ipKey);
             loginAttemptService.recordFailure(emailKey);
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new LoginResponse(false, "Invalid email or password"));
+
+            throw exception;
         }
     }
 
@@ -94,9 +112,13 @@ public class AuthController {
         try {
             byte[] digest = MessageDigest.getInstance("SHA-256")
                     .digest(value.getBytes(StandardCharsets.UTF_8));
+
             return HexFormat.of().formatHex(digest);
+
         } catch (NoSuchAlgorithmException exception) {
-            throw new IllegalStateException("SHA-256 is not available", exception);
+            throw new IllegalStateException(
+                    "SHA-256 is not available",
+                    exception);
         }
     }
 }

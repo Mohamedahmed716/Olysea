@@ -1,0 +1,68 @@
+
+package com.Olysea.backend.common.exception;
+
+import com.Olysea.backend.common.response.ApiErrorResponse;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class GlobalExceptionHandlerTest {
+
+        private GlobalExceptionHandler handler;
+        private MockHttpServletRequest request;
+
+        @BeforeEach
+        void setUp() {
+                handler = new GlobalExceptionHandler();
+
+                request = new MockHttpServletRequest();
+                request.setMethod("GET");
+                request.setRequestURI("/api/projects/999");
+        }
+
+        @Test
+        void handleNotFoundReturns404AndStandardErrorBody() {
+                ResourceNotFoundException exception = new ResourceNotFoundException("Project not found.");
+
+                ResponseEntity<ApiErrorResponse> response = handler.handleNotFound(exception, request);
+
+                assertThat(response.getStatusCode())
+                                .isEqualTo(HttpStatus.NOT_FOUND);
+
+                assertThat(response.getBody()).isNotNull();
+
+                ApiErrorResponse body = response.getBody();
+
+                assertThat(body.status()).isEqualTo(404);
+                assertThat(body.error()).isEqualTo("Not Found");
+                assertThat(body.message()).isEqualTo("Project not found.");
+                assertThat(body.path()).isEqualTo("/api/projects/999");
+                assertThat(body.timestamp()).isNotNull();
+                assertThat(body.fields()).isEmpty();
+        }
+
+        @Test
+        void handleTooManyRequestsReturns429AndStandardErrorBody() {
+                TooManyRequestsException exception = new TooManyRequestsException("Too many requests.");
+
+                ResponseEntity<ApiErrorResponse> response = handler.handleTooManyRequests(exception, request);
+
+                assertThat(response.getStatusCode())
+                                .isEqualTo(HttpStatus.TOO_MANY_REQUESTS);
+
+                assertThat(response.getBody()).isNotNull();
+
+                ApiErrorResponse body = response.getBody();
+
+                assertThat(body.status()).isEqualTo(429);
+                assertThat(body.error()).isEqualTo("Too Many Requests");
+                assertThat(body.message()).isEqualTo("Too many requests.");
+                assertThat(body.path()).isEqualTo("/api/projects/999");
+                assertThat(body.timestamp()).isNotNull();
+                assertThat(body.fields()).isEmpty();
+        }
+}
