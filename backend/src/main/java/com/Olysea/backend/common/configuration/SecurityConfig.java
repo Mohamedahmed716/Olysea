@@ -57,9 +57,10 @@ public class SecurityConfig {
                                                 .sessionFixation(fixation -> fixation.changeSessionId()))
                                 .csrf(csrf -> csrf.csrfTokenRepository(csrfRepository))
                                 .authorizeHttpRequests(auth -> auth
+                                                .requestMatchers("/api/projects/**", "/api/services/**").permitAll()
                                                 .requestMatchers("/api/auth/csrf", "/api/admin/login").permitAll()
                                                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                                .requestMatchers("/api/auth/logout", "/api/projects/**").authenticated()
+                                                .requestMatchers("/api/auth/logout").authenticated()
                                                 .anyRequest().permitAll())
                                 .exceptionHandling(exceptions -> exceptions
                                                 .authenticationEntryPoint(
