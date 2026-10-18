@@ -1,10 +1,13 @@
 
 package com.Olysea.backend.repository;
 
+import com.Olysea.backend.model.ContactRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.Olysea.backend.model.ContactRequest;
+import java.util.List;
 
 public interface ContactRequestRepository
-                extends JpaRepository<ContactRequest, Long> {
+        extends JpaRepository<ContactRequest, Long> {
+
+    List<ContactRequest> findAllByOrderByCreatedAtDesc();
 }
