@@ -1,4 +1,4 @@
-package com.Olysea.backend.model.user;
+package com.Olysea.backend.repository.user;
 
 import com.Olysea.backend.auth.Role;
 import com.Olysea.backend.model.User;

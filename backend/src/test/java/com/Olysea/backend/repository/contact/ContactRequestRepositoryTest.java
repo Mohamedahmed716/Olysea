@@ -1,5 +1,5 @@
 
-package com.Olysea.backend.model.contact;
+package com.Olysea.backend.repository.contact;
 
 import com.Olysea.backend.model.ContactRequest;
 import com.Olysea.backend.repository.ContactRequestRepository;

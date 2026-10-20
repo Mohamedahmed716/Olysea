@@ -5,10 +5,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * In-memory throttling for a single application instance. Use a shared store
- * for multiple instances.
- */
 @Service
 public class LoginAttemptService {
 
@@ -21,8 +17,6 @@ public class LoginAttemptService {
     public boolean isBlocked(String key) {
         AttemptWindow window = attempts.get(key);
         if (window == null) {
-            // Fail closed for new keys if the bounded map is full. Existing keys
-            // remain individually rate-limited until their windows expire.
             return attempts.size() >= MAX_TRACKED_KEYS;
         }
         synchronized (window) {

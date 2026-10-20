@@ -1,9 +1,9 @@
 
-package com.Olysea.backend.service.OlyseaService;
+package com.Olysea.backend.service.olyseaservice;
 
 import com.Olysea.backend.common.exception.ResourceNotFoundException;
-import com.Olysea.backend.controller.OlyseaService.dto.OlyseaServiceRequest;
-import com.Olysea.backend.controller.OlyseaService.dto.OlyseaServiceResponse;
+import com.Olysea.backend.controller.olyseaservice.dto.OlyseaServiceRequest;
+import com.Olysea.backend.controller.olyseaservice.dto.OlyseaServiceResponse;
 import com.Olysea.backend.model.OlyseaService;
 import com.Olysea.backend.repository.OlyseaServiceRepository;
 

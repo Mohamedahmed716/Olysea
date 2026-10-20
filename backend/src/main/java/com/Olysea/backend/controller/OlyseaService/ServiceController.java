@@ -1,9 +1,10 @@
 
-package com.Olysea.backend.controller.OlyseaService;
+package com.Olysea.backend.controller.olyseaservice;
 
-import com.Olysea.backend.controller.OlyseaService.dto.OlyseaServiceRequest;
-import com.Olysea.backend.controller.OlyseaService.dto.OlyseaServiceResponse;
-import com.Olysea.backend.service.OlyseaService.OlyseaServiceService;
+import com.Olysea.backend.controller.olyseaservice.dto.OlyseaServiceRequest;
+import com.Olysea.backend.controller.olyseaservice.dto.OlyseaServiceResponse;
+import com.Olysea.backend.service.olyseaservice.OlyseaServiceService;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

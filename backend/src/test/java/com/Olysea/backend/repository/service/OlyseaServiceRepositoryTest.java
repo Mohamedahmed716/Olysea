@@ -1,5 +1,5 @@
 
-package com.Olysea.backend.model.service;
+package com.Olysea.backend.repository.service;
 
 import com.Olysea.backend.model.OlyseaService;
 import com.Olysea.backend.repository.OlyseaServiceRepository;

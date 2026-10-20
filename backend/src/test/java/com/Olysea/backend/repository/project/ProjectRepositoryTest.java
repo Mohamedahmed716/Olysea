@@ -1,5 +1,5 @@
 
-package com.Olysea.backend.model.project;
+package com.Olysea.backend.repository.project;
 
 import com.Olysea.backend.model.Project;
 import com.Olysea.backend.repository.ProjectRepository;
