@@ -1,0 +1,9 @@
+app-project-preview { display: block; }
+app-project-preview .site { direction: ltr; border-radius: 8px; overflow: hidden; background: #fff; aspect-ratio: 16/10.5; display: flex; flex-direction: column; transition: transform .5s; box-shadow: 0 20px 50px rgba(0, 0, 0, .35); pointer-events: none; color: #111; }
+app-project-preview .chrome { background: #e9e6df; padding: 8px 12px; display: flex; gap: 6px; align-items: center; flex: none; }
+app-project-preview .chrome i { width: 9px; height: 9px; border-radius: 50%; background: #bdb8ad; }
+app-project-preview .chrome u { margin-left: 10px; flex: 1; background: #fff; border-radius: 99px; padding: 1px 12px; font-size: 11px; text-decoration: none; color: #666; white-space: nowrap; overflow: hidden; }
+app-project-preview .pg { flex: 1; min-height: 0; position: relative; overflow: hidden; font-size: clamp(9px, 1.3vw, 13px); }
+app-project-preview .pg > div { position: absolute; inset: 0; height: auto !important; }
+app-project-preview .ph { display: grid; place-items: center; background: linear-gradient(135deg, #c4b0ff, #8ecbff); color: #12163f; font: 800 2.4em var(--fd); text-align: center; padding: 10%; }
+app-project-preview:hover .site, .card:hover app-project-preview .site { transform: scale(1.025); }

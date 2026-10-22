@@ -1,1 +1,24 @@
-<p>header works!</p>
+<header [class.small]="small()">
+  <div class="wrap nav">
+    <a class="logo" href="#home" [attr.aria-label]="i18n.t('a.home')" (click)="close('home', $event)">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="#8ecbff" stroke="currentColor" stroke-width="2"/><path d="M5 20c4-8 8 4 11-3s6-5 11 1" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>Olysea
+    </a>
+
+    <nav class="links" id="links" [class.open]="open()" [attr.aria-label]="i18n.t('a.main')">
+      <a class="l" href="#home"     [class.on]="activeSection() === 'home'"     (click)="close('home', $event)">{{ i18n.t('n.home') }}</a>
+      <a class="l" href="#about"    [class.on]="activeSection() === 'about'"    (click)="close()">{{ i18n.t('n.about') }}</a>
+      <a class="l" href="#services" [class.on]="activeSection() === 'services'" (click)="close()">{{ i18n.t('n.services') }}</a>
+      <a class="l" href="#demos"    [class.on]="activeSection() === 'demos'"    (click)="close()">{{ i18n.t('n.demos') }}</a>
+      <a class="l" href="#contact"  [class.on]="activeSection() === 'contact'"  (click)="close()">{{ i18n.t('n.contact') }}</a>
+      <a class="btn pri" href="#contact" (click)="close()"><span>{{ i18n.t('n.cta') }}</span> <span class="ar" aria-hidden="true">→</span></a>
+    </nav>
+
+    <button class="lang" type="button" [attr.aria-label]="i18n.t('a.lang')" (click)="i18n.toggle()">
+      <span [class.on]="!i18n.isAr()">EN</span><span [class.on]="i18n.isAr()">AR</span>
+    </button>
+    <button class="burger" type="button" aria-controls="links" [attr.aria-expanded]="open()"
+            [attr.aria-label]="i18n.t(open() ? 'a.close' : 'a.open')" (click)="toggle()">
+      <svg width="22" height="22" viewBox="0 0 22 22"><path d="M2 6h18M2 16h18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>

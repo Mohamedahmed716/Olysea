@@ -1,0 +1,22 @@
+:host { display: block; }
+.about { background: var(--a3); color: #12163f; padding: calc(var(--s6) + 20px) 0 var(--s6); min-height: 80vh; }
+.about h2 { max-width: 12em; }
+.lede { font: 500 clamp(24px, 3vw, 42px) / 1.25 var(--fd); letter-spacing: -.02em; max-width: 24em; margin: var(--s4) 0 var(--s5); }
+html[dir='rtl'] .lede { line-height: 1.55; }
+.lede .w { opacity: .2; transition: opacity .3s; }
+.lede .w.on { opacity: 1; }
+.pr { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5); align-items: center; }
+.pr-list { display: grid; border-top: 2px solid #12163f; }
+.pr-b { text-align: start; background: none; border: 0; border-bottom: 2px solid #12163f; padding: 20px 0; cursor: pointer; color: inherit; font: inherit; display: grid; gap: 6px; min-height: 48px; }
+.pr-b h3 { font-size: clamp(28px, 3.4vw, 48px); transition: transform var(--t); display: flex; align-items: center; gap: .35em; }
+.pr-b h3::before { content: ''; width: .5em; height: .5em; border-radius: 50%; background: var(--dc); border: 2px solid #12163f; flex: none; }
+.pr-b p { max-height: 0; overflow: hidden; opacity: 0; transition: max-height var(--t), opacity var(--t); font-size: 17px; }
+.pr-b[aria-pressed='true'] p { max-height: 80px; opacity: 1; }
+.pr-b[aria-pressed='true'] h3, .pr-b:hover h3 { transform: translateX(calc(14px * var(--dir))); }
+.pr-stage { background: var(--a4); border: 3px solid #12163f; border-radius: 6px; aspect-ratio: 1; box-shadow: 10px 10px 0 #12163f; position: relative; overflow: hidden; width: 100%; max-width: 520px; justify-self: end; }
+.pr-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sh { opacity: 0; transform: scale(.8) rotate(-8deg); transform-origin: 200px 200px; transition: opacity .5s, transform .6s cubic-bezier(.2, .7, .2, 1); }
+.sh.on { opacity: 1; transform: none; }
+.rot { transform-origin: 200px 200px; animation: rot 16s linear infinite; }
+@keyframes rot { to { transform: rotate(360deg); } }
+@media (max-width: 900px) { .pr { grid-template-columns: 1fr; gap: var(--s4); } .pr-stage { justify-self: stretch; } }

@@ -1,0 +1,13 @@
+:host { display: block; }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+.tabs button { border: 1.5px solid var(--ink); background: transparent; color: var(--ink); border-radius: 99px; padding: 7px 16px; font-weight: 700; cursor: pointer; }
+.tabs button span { opacity: .65; margin-inline-start: 4px; }
+.tabs button.on { background: var(--ink); color: var(--bg); }
+.ad-item h3 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.full { white-space: pre-wrap; color: var(--ink) !important; margin-top: 12px; max-width: 70ch; }
+.btns { align-items: center; }
+.mini-select { min-height: 38px; padding: 4px 10px; font-size: 14px; width: auto; border: 1.5px solid var(--ink); background: var(--bg); color: var(--ink); cursor: pointer; }
+.backdrop { position: fixed; inset: 0; background: rgba(10, 14, 48, .7); z-index: 90; }
+.confirm { position: fixed; z-index: 91; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(460px, calc(100vw - 32px)); box-shadow: none; }
+.confirm h3 { font-size: 30px; margin-bottom: 10px; }
+.acts { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }

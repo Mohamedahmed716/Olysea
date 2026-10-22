@@ -170,6 +170,30 @@ class ContactApiIntegrationTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void adminCanUpdateContactStatus() throws Exception {
+        ContactRequest contact = createContact(
+                "Mohamed",
+                "visitor@example.com",
+                "Question",
+                "Hello.");
+
+        mockMvc.perform(patch(
+                "/api/admin/contacts/{id}",
+                contact.getId())
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                          "status": "READ"
+                        }
+                        """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(contact.getId().intValue())))
+                .andExpect(jsonPath("$.status", is("READ")));
+    }
+
     private ContactRequest createContact(
             String name,
             String email,

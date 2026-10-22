@@ -1,0 +1,12 @@
+<div class="site">
+  <div class="chrome"><i></i><i></i><i></i><u>{{ host() }}</u></div>
+  <div class="pg">
+    @if (image(); as src) {
+      <div><img [src]="src" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+    } @else if (illustration(); as html) {
+      <div [innerHTML]="html"></div>
+    } @else {
+      <div class="ph"><b>{{ project().name }}</b></div>
+    }
+  </div>
+</div>

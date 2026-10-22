@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.controller.olyseaservice;
 
 import com.Olysea.backend.controller.olyseaservice.dto.OlyseaServiceRequest;
@@ -22,14 +21,14 @@ public class ServiceController {
         this.serviceService = serviceService;
     }
 
-    // Public endpoints
+    // Public & Admin listing endpoints
 
-    @GetMapping("/services")
+    @GetMapping({"/services", "/admin/services"})
     public ResponseEntity<List<OlyseaServiceResponse>> getAllServices() {
         return ResponseEntity.ok(serviceService.getAllServices());
     }
 
-    @GetMapping("/services/{id}")
+    @GetMapping({"/services/{id}", "/admin/services/{id}"})
     public ResponseEntity<OlyseaServiceResponse> getServiceById(
             @PathVariable Long id) {
         return ResponseEntity.ok(serviceService.getServiceById(id));

@@ -1,1 +1,63 @@
-<p>login works!</p>
+<main class="page">
+  <div class="ambient" aria-hidden="true"><span class="blob one"></span><span class="blob two"></span><span class="blob three"></span></div>
+
+  <section class="left" aria-label="Olysea brand">
+    <a class="brand" routerLink="/" aria-label="Olysea home">
+      <span class="mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M4 19c4-8 8 5 12-3s7-5 12 1" stroke="#12163f" stroke-width="2.5" stroke-linecap="round"/></svg></span>Olysea
+    </a>
+    <div class="story">
+      <h1>Your work.<br>Your <span class="highlight">control.</span></h1>
+      <p>A quieter place to manage the details behind the digital experiences we build.</p>
+      <div class="art" aria-hidden="true">
+        <div class="art-card back"></div>
+        <div class="art-card front">
+          <div class="art-top"><i></i><i></i><i></i></div>
+          <div class="art-lines"><b></b><b></b><b></b></div>
+          <div class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></div>
+        </div>
+        <div class="art-sticker">O.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="right" aria-label="Admin login">
+    <div class="login-card">
+      <div class="lock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4.5" y="10" width="15" height="11" rx="2" stroke="#12163f" stroke-width="1.8"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#12163f" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="15" r="1.4" fill="#12163f"/><path d="M12 16.4v1.7" stroke="#12163f" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+      <h2>Welcome back.</h2>
+      <p class="sub">Sign in with your admin credentials to continue.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="email">Admin email</label>
+          <input id="email" type="email" formControlName="email" placeholder="admin@olysea.tech" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button class="show-pass" type="button" [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'" [attr.aria-pressed]="showPassword()" (click)="showPassword.set(!showPassword())">
+              <svg class="eye-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.4-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.4 6.5-9.5 6.5S2.5 12 2.5 12Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="row-meta">
+          <label class="remember"><input type="checkbox" formControlName="remember"> Keep me signed in</label>
+          <a class="forgot" href="mailto:hello@olysea.tech?subject=Admin%20access%20help">Need help?</a>
+        </div>
+        <button class="submit" type="submit" [disabled]="busy()"><span>{{ busy() ? 'Verifying…' : 'Sign in securely' }}</span><span class="arrow" aria-hidden="true">→</span></button>
+        <div class="message" [class.on]="message()" [class.ok]="ok()" role="alert" aria-live="polite">{{ message() }}</div>
+      </form>
+
+      <div class="secure-note">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 19 6v5c0 4.5-3 7.5-7 10-4-2.5-7-5.5-7-10V6l7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Authorized administrators only. Your sign-in is verified by the Olysea server.</span>
+      </div>
+      <a class="back" routerLink="/"><span aria-hidden="true">←</span> Back to Olysea</a>
+    </div>
+  </section>
+
+  <footer class="copyright">© 2026 Olysea. All rights reserved.</footer>
+</main>

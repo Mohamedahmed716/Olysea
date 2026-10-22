@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.model;
 
 import jakarta.persistence.*;
@@ -16,6 +15,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class OlyseaService {
 
+    public OlyseaService(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +31,18 @@ public class OlyseaService {
     @NotBlank
     @Column(nullable = false, length = 2000)
     private String description;
+
+    @Column(length = 500)
+    private String extra;
+
+    @Column(name = "title_ar", length = 150)
+    private String titleAr;
+
+    @Column(name = "description_ar", length = 2000)
+    private String descriptionAr;
+
+    @Column(name = "extra_ar", length = 500)
+    private String extraAr;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

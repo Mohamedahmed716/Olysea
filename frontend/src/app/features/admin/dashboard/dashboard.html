@@ -1,1 +1,38 @@
-<p>dashboard works!</p>
+<div class="ad-head">
+  <div>
+    <h1>Overview</h1>
+    <p>What is happening on the Olysea website.</p>
+  </div>
+</div>
+
+@if (loading()) {
+  <app-loading />
+} @else if (failed()) {
+  <div class="panel ad-empty">Could not load the overview. Check that the server is running, then refresh.</div>
+} @else {
+  <div class="stats">
+    <a class="stat s1" routerLink="/admin/contacts"><b>{{ newCount() }}</b><span>New messages</span></a>
+    <a class="stat s2" routerLink="/admin/contacts"><b>{{ contacts().length }}</b><span>Total messages</span></a>
+    <a class="stat s3" routerLink="/admin/services"><b>{{ serviceCount() }}</b><span>Services</span></a>
+    <a class="stat s4" routerLink="/admin/projects"><b>{{ projectCount() }}</b><span>Demo projects</span></a>
+  </div>
+
+  <h2 class="sub">Latest messages</h2>
+  @if (recent().length) {
+    <div class="ad-list">
+      @for (c of recent(); track c.id) {
+        <div class="ad-item">
+          <div>
+            <h3>{{ c.name }}</h3>
+            <p>{{ c.message.length > 140 ? c.message.slice(0, 140) + '…' : c.message }}</p>
+            <div class="meta"><span>{{ c.email }}</span><span>{{ c.type }}</span>@if (c.createdAt) { <span>{{ c.createdAt | date: 'medium' }}</span> }</div>
+          </div>
+          <span class="pill" [class]="'pill ' + (c.status ?? 'NEW')">{{ c.status ?? 'NEW' }}</span>
+        </div>
+      }
+    </div>
+    <p class="more"><a routerLink="/admin/contacts">Open all messages →</a></p>
+  } @else {
+    <div class="panel ad-empty">No messages yet.</div>
+  }
+}

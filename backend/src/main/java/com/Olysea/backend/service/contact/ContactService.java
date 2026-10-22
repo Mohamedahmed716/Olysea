@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.service.contact;
 
 import com.Olysea.backend.common.exception.ResourceNotFoundException;
@@ -26,15 +25,24 @@ public class ContactService {
     public ContactMessageResponse submitContact(
             ContactMessageRequest request) {
 
+        // Honeypot check: silently ignore automated spam bot submission
+        if (request.website() != null && !request.website().isBlank()) {
+            ContactRequest fake = new ContactRequest();
+            fake.setId(-1L);
+            fake.setName(request.name());
+            fake.setEmail(request.email());
+            fake.setMessage(request.message());
+            return toResponse(fake);
+        }
+
         ContactRequest contact = new ContactRequest();
         contact.setName(request.name().trim());
         contact.setEmail(request.email().trim());
-
-        if (request.subject() != null) {
-            contact.setSubject(normalizeSubject(request.subject()));
-        }
-
+        contact.setBusiness(trimToNull(request.business()));
+        contact.setType(trimToNull(request.type()));
+        contact.setSubject(trimToNull(request.effectiveSubject()));
         contact.setMessage(request.message().trim());
+        contact.setStatus("NEW");
 
         ContactRequest saved = contactRepository.save(contact);
 
@@ -53,6 +61,16 @@ public class ContactService {
     }
 
     @Transactional
+    public ContactMessageResponse updateContactStatus(Long id, String status) {
+        ContactRequest contact = findContact(id);
+        if (status != null && !status.isBlank()) {
+            contact.setStatus(status.trim().toUpperCase());
+        }
+        ContactRequest updated = contactRepository.save(contact);
+        return toResponse(updated);
+    }
+
+    @Transactional
     public void deleteContact(Long id) {
         ContactRequest contact = findContact(id);
         contactRepository.delete(contact);
@@ -64,12 +82,12 @@ public class ContactService {
                         "Contact message not found."));
     }
 
-    private String normalizeSubject(String subject) {
-        if (subject.isBlank()) {
+    private String trimToNull(String value) {
+        if (value == null || value.isBlank()) {
             return null;
         }
 
-        return subject.trim();
+        return value.trim();
     }
 
     private ContactMessageResponse toResponse(ContactRequest contact) {
@@ -77,8 +95,11 @@ public class ContactService {
                 contact.getId(),
                 contact.getName(),
                 contact.getEmail(),
+                contact.getBusiness(),
+                contact.getType(),
                 contact.getSubject(),
                 contact.getMessage(),
+                contact.getStatus() != null ? contact.getStatus() : "NEW",
                 contact.getCreatedAt());
     }
 }

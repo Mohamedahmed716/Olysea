@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.controller.auth;
 
 import com.Olysea.backend.auth.LoginAttemptService;
@@ -30,6 +29,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.Locale;
+import java.util.Map;
 
 @RestController
 public class AuthController {
@@ -96,7 +96,7 @@ public class AuthController {
             loginAttemptService.recordSuccess(emailKey);
 
             return ResponseEntity.ok(
-                    new LoginResponse(true, "Login successful"));
+                    new LoginResponse(true, "Login successful", Map.of("email", email)));
 
         } catch (AuthenticationException exception) {
             SecurityContextHolder.clearContext();

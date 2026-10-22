@@ -1,9 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
-  imports: [],
   selector: 'app-loading',
-  styleUrl: './loading.css',
   templateUrl: './loading.html',
+  styleUrl: './loading.css',
 })
-export class Loading {}
+export class Loading {
+  readonly label = input('Loading…');
+  /** Use on dark backgrounds (the demos section). */
+  readonly light = input(false);
+}

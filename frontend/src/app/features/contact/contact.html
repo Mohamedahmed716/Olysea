@@ -1,1 +1,90 @@
-<p>contact works!</p>
+<section class="contact">
+  <div class="wrap grid">
+    <div>
+      <h2>{{ i18n.t('c.h2') }}</h2>
+      <p class="sub">{{ i18n.t('c.sub') }}</p>
+      <div class="info">
+        <a [href]="'mailto:' + site.email">{{ site.email }}</a>
+        <a [href]="site.linkedin">{{ i18n.t('c.s1') }}</a>
+        <a [href]="site.instagram">{{ i18n.t('c.s2') }}</a>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate aria-describedby="status">
+      <div class="f" [class.bad]="error('name')">
+        <label for="name">{{ i18n.t('f.name') }}</label>
+        <input id="name" formControlName="name" autocomplete="name" [attr.aria-invalid]="!!error('name')">
+        <span class="err">{{ error('name') ? i18n.t(error('name')) : '' }}</span>
+      </div>
+
+      <div class="f" [class.bad]="error('email')">
+        <label for="email">{{ i18n.t('f.email') }}</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" [attr.aria-invalid]="!!error('email')">
+        <span class="err">{{ error('email') ? i18n.t(error('email')) : '' }}</span>
+      </div>
+
+      <div class="f">
+        <label for="biz">{{ i18n.t('f.biz') }} <small>{{ i18n.t('f.opt') }}</small></label>
+        <input id="biz" formControlName="business" autocomplete="organization">
+      </div>
+
+      <div class="f" [class.bad]="error('type')">
+        <label for="c-type-trigger">{{ i18n.t('f.type') }}</label>
+        <div class="custom-select-wrap" [class.open]="typeDropdownOpen()">
+          <button
+            type="button"
+            id="c-type-trigger"
+            class="custom-select-btn"
+            [class.placeholder]="!selectedType()"
+            [attr.aria-expanded]="typeDropdownOpen()"
+            aria-haspopup="listbox"
+            (click)="toggleTypeDropdown()"
+          >
+            <span>{{ selectedTypeLabel() || i18n.t('f.choose') }}</span>
+            <svg class="cs-arrow" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+
+          @if (typeDropdownOpen()) {
+            <ul class="custom-select-list" role="listbox" [attr.aria-label]="i18n.t('f.type')">
+              @for (t of types; track t.value) {
+                <li
+                  role="option"
+                  [attr.aria-selected]="selectedType() === t.value"
+                  [class.selected]="selectedType() === t.value"
+                  (click)="selectType(t.value)"
+                >
+                  <span class="cs-dot" aria-hidden="true"></span>
+                  <span class="cs-text">{{ i18n.t(t.key) }}</span>
+                  @if (selectedType() === t.value) {
+                    <svg class="cs-check" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        <input type="hidden" formControlName="type">
+        <span class="err">{{ error('type') ? i18n.t(error('type')) : '' }}</span>
+      </div>
+
+      <div class="f" [class.bad]="error('message')">
+        <label for="msg">{{ i18n.t('f.msg') }}</label>
+        <textarea id="msg" formControlName="message" [attr.aria-invalid]="!!error('message')"></textarea>
+        <span class="err">{{ error('message') ? i18n.t(error('message')) : '' }}</span>
+      </div>
+
+      <input class="hp" formControlName="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <button class="btn pri" type="submit" [disabled]="sending()">
+        @if (sending()) { <span class="spin" aria-hidden="true"></span> }
+        <span>{{ i18n.t(sending() ? 'f.sending' : 'f.send') }}</span>
+      </button>
+
+      <div class="msg" id="status" role="status" aria-live="polite" [class.show]="status()" [class.ok]="statusOk()" [class.no]="!statusOk()">{{ status() }}</div>
+    </form>
+  </div>
+</section>

@@ -1,1 +1,4 @@
-<p>loading works!</p>
+<div class="loading" [class.light]="light()" role="status" aria-live="polite">
+  <span class="spin" aria-hidden="true"></span>
+  <span>{{ label() }}</span>
+</div>

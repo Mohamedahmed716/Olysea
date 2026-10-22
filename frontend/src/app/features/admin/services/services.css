@@ -1,0 +1,11 @@
+:host {
+    display: block;
+}
+
+.ad-empty .btn {
+    margin-top: 14px;
+}
+
+.meta.ar {
+    font-family: 'Cairo', Tahoma, sans-serif;
+}

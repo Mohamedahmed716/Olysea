@@ -1,0 +1,20 @@
+<div class="layout">
+  <aside class="side">
+    <a class="brand" routerLink="/admin">
+      <span class="mark"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M4 19c4-8 8 5 12-3s7-5 12 1" stroke="#12163f" stroke-width="2.5" stroke-linecap="round" />
+        </svg></span>Olysea
+    </a>
+    <nav aria-label="Admin">
+      @for (l of links; track l.path) {
+      <a [routerLink]="l.path" routerLinkActive="on" [routerLinkActiveOptions]="{ exact: l.exact }">{{ l.label }}</a>
+      }
+    </nav>
+    <div class="foot">
+      <a class="view" routerLink="/" target="_blank" rel="noopener">View website ↗</a>
+      <span class="who">{{ auth.user()?.email }}</span>
+      <button class="btn" type="button" (click)="auth.logout()">Sign out</button>
+    </div>
+  </aside>
+  <div class="content"><router-outlet /></div>
+</div>

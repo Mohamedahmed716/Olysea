@@ -1,0 +1,147 @@
+:host {
+  display: block;
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  min-height: 100vh;
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+.side {
+  background: var(--paper);
+  border-inline-end: 2px solid var(--ink);
+  border-right: 2px solid var(--ink) !important;
+  border-left: none !important;
+  padding: 24px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  font: 800 25px/1 var(--fd);
+  letter-spacing: -.045em;
+}
+
+.mark {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: var(--acc);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.mark svg {
+  width: 23px;
+  height: 23px;
+}
+
+nav {
+  display: grid;
+  gap: 6px;
+}
+
+nav a {
+  text-decoration: none;
+  font-weight: 700;
+  padding: 11px 14px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: background .2s, border-color .2s;
+}
+
+nav a:hover {
+  background: color-mix(in srgb, var(--acc) 45%, transparent);
+}
+
+nav a.on {
+  background: var(--acc);
+  color: #12163f;
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.foot {
+  margin-top: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.view {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.who {
+  color: var(--mute);
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.foot .btn {
+  justify-content: center;
+  min-height: 42px;
+  padding: 8px 14px;
+}
+
+.content {
+  padding: clamp(20px, 4vw, 48px);
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .side {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    border-inline-end: 0;
+    border-bottom: 2px solid var(--ink);
+    padding: 14px 16px;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    order: 3;
+    width: 100%;
+  }
+
+  nav a {
+    padding: 8px 12px;
+  }
+
+  .foot {
+    margin: 0 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .who {
+    display: none;
+  }
+}
