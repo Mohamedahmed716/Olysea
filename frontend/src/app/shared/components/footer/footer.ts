@@ -1,9 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { SITE } from '../../../core/data/defaults';
+import { I18n } from '../../../core/services/i18n';
 
 @Component({
-  imports: [],
   selector: 'app-footer',
-  styleUrl: './footer.css',
+  imports: [RouterLink],
   templateUrl: './footer.html',
+  styleUrl: './footer.css',
 })
-export class Footer {}
+export class Footer {
+  protected readonly i18n = inject(I18n);
+  protected readonly site = SITE;
+  protected readonly year = new Date().getFullYear();
+}

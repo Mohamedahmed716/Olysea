@@ -1,0 +1,4 @@
+.loading { display: flex; align-items: center; justify-content: center; gap: 12px; padding: var(--s4) 0; font-weight: 500; color: var(--mute); }
+.loading.light { color: #c3cae0; }
+.spin { width: 22px; height: 22px; border: 3px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: sp .7s linear infinite; }
+@keyframes sp { to { transform: rotate(360deg); } }

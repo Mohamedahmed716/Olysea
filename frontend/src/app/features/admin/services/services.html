@@ -1,1 +1,76 @@
-<p>services works!</p>
+<div class="ad-head">
+  <div>
+    <h1>Services</h1>
+    <p>Shown on the public Services page. Arabic text is optional.</p>
+  </div>
+  <button class="btn pri" type="button" (click)="openForm(null)">+ Add service</button>
+</div>
+
+@if (loading()) {
+<app-loading />
+} @else if (failed()) {
+<div class="panel ad-empty">Could not load services. Check that the server is running, then refresh.</div>
+} @else if (!items().length) {
+<div class="panel ad-empty">
+  <p>No services yet.</p>
+  <button class="btn" type="button" (click)="importDefaults()">Import the 5 starter services</button>
+</div>
+} @else {
+<div class="ad-list">
+  @for (s of items(); track s.id; let i = $index) {
+  <article class="ad-item">
+    <div>
+      <h3>{{ i + 1 }}. {{ s.title }}</h3>
+      <p>{{ s.description }}</p>
+      @if (s.extra) { <div class="meta"><span>{{ s.extra }}</span></div> }
+      @if (s.titleAr) { <div class="meta ar" dir="rtl"><span>{{ s.titleAr }}</span></div> }
+    </div>
+    <div class="btns">
+      <button class="btn mini" type="button" (click)="openForm(s)">Edit</button>
+      <button class="btn mini dng" type="button" (click)="askDelete(s)">Delete</button>
+    </div>
+  </article>
+  }
+</div>
+}
+
+<dialog class="dlg" #dialog aria-labelledby="st">
+  <h3 id="st">{{ editing() ? 'Edit service' : 'Add a service' }}</h3>
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="f" [class.bad]="invalid('title')">
+      <label for="s-title">Title</label>
+      <input id="s-title" formControlName="title" autocomplete="off">
+      @if (invalid('title')) { <div class="err" role="alert">Enter a title.</div> }
+    </div>
+    <div class="f" [class.bad]="invalid('description')">
+      <label for="s-desc">Description</label>
+      <textarea id="s-desc" formControlName="description"></textarea>
+      @if (invalid('description')) { <div class="err" role="alert">Write a short description (at least 10 characters).
+      </div> }
+    </div>
+    <div class="f">
+      <label for="s-extra">Extra line <small>(shown on hover)</small></label>
+      <input id="s-extra" formControlName="extra" autocomplete="off">
+    </div>
+    <div class="sect">Arabic version (optional)</div>
+    <div class="f"><label for="s-tar">Title (Arabic)</label><input id="s-tar" formControlName="titleAr" dir="rtl"
+        autocomplete="off"></div>
+    <div class="f"><label for="s-dar">Description (Arabic)</label><textarea id="s-dar" formControlName="descriptionAr"
+        dir="rtl"></textarea></div>
+    <div class="f"><label for="s-xar">Extra line (Arabic)</label><input id="s-xar" formControlName="extraAr" dir="rtl"
+        autocomplete="off"></div>
+    <div class="acts">
+      <button type="button" class="btn" (click)="closeForm()">Cancel</button>
+      <button type="submit" class="btn pri" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save service' }}</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dlg" #delDialog aria-labelledby="sdt">
+  <h3 id="sdt">Delete this service?</h3>
+  <p>“{{ toDelete()?.title }}” will be removed from the website.</p>
+  <div class="acts">
+    <button type="button" class="btn" (click)="cancelDelete()">Keep it</button>
+    <button type="button" class="btn dng" (click)="confirmDelete()">Delete service</button>
+  </div>
+</dialog>

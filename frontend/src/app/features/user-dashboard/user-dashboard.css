@@ -1,0 +1,9 @@
+:host { display: block; }
+.bar { position: sticky; top: 0; z-index: 40; background: var(--bg); border-bottom: 2px solid var(--ink); }
+.row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 10px; }
+.badge { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 99px; padding: 6px 14px; }
+.badge i { width: 10px; height: 10px; border-radius: 50%; background: var(--a4); animation: pu 1.6s ease-in-out infinite; }
+@keyframes pu { 50% { transform: scale(1.5); } }
+.who { color: var(--mute); font-size: 14px; }
+.acts { margin-inline-start: auto; display: flex; gap: 10px; flex-wrap: wrap; }
+.acts .btn { min-height: 42px; padding: 8px 16px; font-size: 15px; }

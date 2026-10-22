@@ -1,1 +1,113 @@
-<p>projects works!</p>
+<section class="demos">
+  <div class="wrap dhead">
+    <div>
+      <h2>{{ i18n.t('d.h2') }}</h2>
+      <p class="lead">{{ i18n.t('d.lead') }}</p>
+    </div>
+    <div class="arrows">
+      <button class="ab" type="button" [attr.aria-label]="i18n.t('a.prev')" [disabled]="idx() === 0" (click)="go(idx() - 1)">←</button>
+      <button class="ab" type="button" [attr.aria-label]="i18n.t('a.next')" [disabled]="idx() >= total() - 1" (click)="go(idx() + 1)">→</button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <app-loading [label]="i18n.t('load')" [light]="true" />
+  } @else {
+    <div class="track" #track role="region" aria-roledescription="carousel" [attr.aria-label]="i18n.t('a.track')"
+         [class.drag]="dragging()" (scroll)="onScroll()" (pointerdown)="onDown($event)" (click)="onTrackClick($event)">
+      @for (p of items(); track p.id ?? $index; let i = $index) {
+        <div class="card" [class.active]="i === idx()" [style.--c]="colors[i % colors.length]" role="group" aria-roledescription="slide"
+             [attr.aria-label]="(i + 1) + ' / ' + items().length + ': ' + p.name">
+          @if (editable()) {
+            <button type="button" class="del" [attr.aria-label]="'Delete project ' + p.name" (click)="askDelete(p)">✕</button>
+          }
+          <a class="clink" [href]="p.url" target="_blank" rel="noopener" draggable="false">
+            <app-project-preview [project]="p" />
+            <div class="meta">
+              <div>
+                <small>{{ i18n.pick(p.category, p.categoryAr) }} · {{ i18n.t('d.concept') }}</small>
+                <h3>{{ p.name }}</h3>
+                <p>{{ i18n.pick(p.description, p.descriptionAr) }}</p>
+              </div>
+              <span class="go">{{ i18n.t('d.explore') }} <span aria-hidden="true">→</span></span>
+            </div>
+          </a>
+        </div>
+      }
+      @if (editable()) {
+        <div class="card addcard" [class.active]="items().length === idx()" role="group" aria-roledescription="slide" aria-label="Add a new project">
+          <button type="button" class="addbtn" (click)="openAdd()">
+            <span class="pl" aria-hidden="true">+</span><span class="tx">Add new project</span>
+          </button>
+        </div>
+      }
+      @if (!items().length && !editable()) {
+        <p class="empty">{{ i18n.t('d.empty') }}</p>
+      }
+    </div>
+
+    <div class="prog">
+      <span class="cnt">{{ counter() }}</span>
+      <div class="bar2"><b [style.width.%]="progress()"></b></div>
+    </div>
+    <p class="hint">{{ i18n.t('d.hint') }}</p>
+  }
+</section>
+
+@if (editable()) {
+  <dialog class="dlg" #addDialog aria-labelledby="adt">
+    <h3 id="adt">Add a new project</h3>
+    <p>It appears at the end of the Demos carousel.</p>
+    <form [formGroup]="form" (ngSubmit)="submitAdd()" novalidate>
+      <div class="f" [class.bad]="errors()['category']">
+        <label for="a-cat">Category</label>
+        <input id="a-cat" formControlName="category" placeholder="e.g. Law Firm" autocomplete="off">
+        <div class="err" role="alert">{{ errors()['category'] }}</div>
+      </div>
+      <div class="f" [class.bad]="errors()['name']">
+        <label for="a-name">Project name</label>
+        <input id="a-name" formControlName="name" placeholder="e.g. Harbor &amp; Co." autocomplete="off">
+        <div class="err" role="alert">{{ errors()['name'] }}</div>
+      </div>
+      <div class="f" [class.bad]="errors()['description']">
+        <label for="a-desc">Short description</label>
+        <textarea id="a-desc" formControlName="description"></textarea>
+        <div class="err" role="alert">{{ errors()['description'] }}</div>
+      </div>
+      <div class="f" [class.bad]="errors()['image']">
+        <label for="a-img">Photo of the demo</label>
+        <input id="a-img" type="file" accept="image/*" (change)="onFile($event)">
+        <span class="hintt">A screenshot of the demo site works best (16:10 looks ideal).</span>
+        @if (imageData(); as img) { <img class="pvimg on" [src]="img" alt="Preview of the selected photo"> }
+        <div class="err" role="alert">{{ errors()['image'] }}</div>
+      </div>
+      <div class="f" [class.bad]="errors()['url']">
+        <label for="a-url">Demo link</label>
+        <input id="a-url" type="url" formControlName="url" placeholder="https://demo-example.olysea.tech" autocomplete="off">
+        <div class="err" role="alert">{{ errors()['url'] }}</div>
+      </div>
+      <div class="sect">Arabic version (optional)</div>
+      <div class="f">
+        <label for="a-catar">Category (Arabic)</label>
+        <input id="a-catar" formControlName="categoryAr" dir="rtl" autocomplete="off">
+      </div>
+      <div class="f">
+        <label for="a-descar">Description (Arabic)</label>
+        <textarea id="a-descar" formControlName="descriptionAr" dir="rtl"></textarea>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn" (click)="closeAdd()">Cancel</button>
+        <button type="submit" class="btn pri" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Add project' }}</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dlg" #delDialog aria-labelledby="ddt">
+    <h3 id="ddt">Delete this project?</h3>
+    <p>“{{ toDelete()?.name }}” will be removed from the website.</p>
+    <div class="acts">
+      <button type="button" class="btn" (click)="cancelDelete()">Keep it</button>
+      <button type="button" class="btn dng" (click)="confirmDelete()">Delete project</button>
+    </div>
+  </dialog>
+}

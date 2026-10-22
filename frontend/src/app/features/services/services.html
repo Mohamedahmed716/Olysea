@@ -1,1 +1,23 @@
-<p>services works!</p>
+<section class="svc-section">
+  <div class="wrap">
+    <h2 appReveal>{{ i18n.t('s.h2') }}</h2>
+
+    @if (loading()) {
+      <app-loading [label]="i18n.t('load')" />
+    } @else {
+      <div class="svc-list">
+        @for (s of items(); track s.id ?? $index; let i = $index) {
+          <div class="svc" appReveal tabindex="0" [style.--c]="'var(--c' + (i % 5) + ')'">
+            <span class="n">{{ i + 1 }}</span>
+            <div><h3>{{ i18n.pick(s.title, s.titleAr) }}</h3></div>
+            <p>
+              <span>{{ i18n.pick(s.description, s.descriptionAr) }}</span>
+              @if (s.extra) { <span class="extra">{{ i18n.pick(s.extra, s.extraAr) }}</span> }
+            </p>
+            <span class="ar" aria-hidden="true">→</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>

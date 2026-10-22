@@ -36,3 +36,7 @@ build/
 .env
 .env.*
 !.env.example
+
+
+### Local database data ###
+data/

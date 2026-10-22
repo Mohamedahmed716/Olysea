@@ -1,0 +1,86 @@
+:host {
+  display: block;
+}
+
+/* Compact overview layout fitting within viewport without scrolling */
+.ad-head {
+  margin-bottom: 20px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat {
+  display: grid;
+  gap: 2px;
+  text-decoration: none;
+  background: var(--c);
+  color: #12163f;
+  border: 2px solid #12163f;
+  border-radius: 8px;
+  box-shadow: 4px 4px 0 #12163f;
+  padding: 14px 18px;
+  transition: transform var(--t);
+}
+
+.stat:hover {
+  transform: translate(-2px, -2px);
+}
+
+.stat b {
+  font: 800 clamp(36px, 3.2vw, 44px)/1 var(--fd);
+}
+
+.stat span {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.s1 { --c: var(--a3); }
+.s2 { --c: var(--acc); }
+.s3 { --c: var(--a2); }
+.s4 { --c: #fff3c4; }
+
+.sub {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.ad-list {
+  display: grid;
+  gap: 10px;
+}
+
+.ad-item {
+  padding: 12px 16px;
+}
+
+.ad-item h3 {
+  font-size: 18px;
+  margin-bottom: 3px;
+}
+
+.ad-item p {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.more {
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.pill {
+  align-self: start;
+}
+
+@media (max-width: 1024px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

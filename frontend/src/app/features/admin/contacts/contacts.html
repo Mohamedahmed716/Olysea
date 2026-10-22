@@ -1,1 +1,63 @@
-<p>contacts works!</p>
+<div class="ad-head">
+  <div>
+    <h1>Messages</h1>
+    <p>Requests sent through the contact form.</p>
+  </div>
+</div>
+
+<div class="tabs" role="tablist" aria-label="Filter by status">
+  @for (tab of tabs; track tab.value) {
+    <button type="button" role="tab" [attr.aria-selected]="filter() === tab.value" [class.on]="filter() === tab.value" (click)="filter.set(tab.value)">
+      {{ tab.label }} <span>{{ count(tab.value) }}</span>
+    </button>
+  }
+</div>
+
+@if (loading()) {
+  <app-loading />
+} @else if (failed()) {
+  <div class="panel ad-empty">Could not load messages. Check that the server is running, then refresh.</div>
+} @else if (!shown().length) {
+  <div class="panel ad-empty">Nothing here.</div>
+} @else {
+  <div class="ad-list">
+    @for (c of shown(); track c.id) {
+      <article class="ad-item">
+        <div>
+          <h3>{{ c.name }} <span [class]="'pill ' + (c.status ?? 'NEW')">{{ c.status ?? 'NEW' }}</span></h3>
+          <div class="meta">
+            <a [href]="'mailto:' + c.email">{{ c.email }}</a>
+            @if (c.business) { <span>{{ c.business }}</span> }
+            <span>{{ c.type }}</span>
+            @if (c.createdAt) { <span>{{ c.createdAt | date: 'medium' }}</span> }
+          </div>
+          @if (open() === c.id) {
+            <p class="full">{{ c.message }}</p>
+          } @else {
+            <p>{{ c.message.length > 120 ? c.message.slice(0, 120) + '…' : c.message }}</p>
+          }
+        </div>
+        <div class="btns">
+          <button class="btn mini" type="button" (click)="toggle(c)">{{ open() === c.id ? 'Collapse' : 'Read' }}</button>
+          <a class="btn mini pri" [href]="reply(c)" (click)="setStatus(c, 'REPLIED', true)">Reply</a>
+          <select class="mini-select" [value]="c.status ?? 'NEW'" (change)="setStatus(c, $any($event.target).value)" aria-label="Change status">
+            @for (s of statuses; track s) { <option [value]="s">{{ s.charAt(0) + s.slice(1).toLowerCase() }}</option> }
+          </select>
+          <button class="btn mini dng" type="button" (click)="pendingDelete.set(c)">Delete</button>
+        </div>
+      </article>
+    }
+  </div>
+}
+
+@if (pendingDelete(); as c) {
+  <div class="backdrop" (click)="pendingDelete.set(null)"></div>
+  <div class="confirm panel" role="alertdialog" aria-labelledby="cd-t">
+    <h3 id="cd-t">Delete this message?</h3>
+    <p>The message from {{ c.name }} will be permanently removed.</p>
+    <div class="acts">
+      <button class="btn" type="button" (click)="pendingDelete.set(null)">Keep it</button>
+      <button class="btn dng" type="button" (click)="remove()">Delete message</button>
+    </div>
+  </div>
+}

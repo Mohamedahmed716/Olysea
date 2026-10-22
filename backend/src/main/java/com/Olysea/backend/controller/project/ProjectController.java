@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.controller.project;
 
 import com.Olysea.backend.controller.project.dto.ProjectRequest;
@@ -19,12 +18,12 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping("/api/projects")
+    @GetMapping({"/api/projects", "/api/admin/projects"})
     public List<ProjectResponse> getAllProjects() {
         return projectService.getAllProjects();
     }
 
-    @GetMapping("/api/projects/{id}")
+    @GetMapping({"/api/projects/{id}", "/api/admin/projects/{id}"})
     public ProjectResponse getProjectById(@PathVariable Long id) {
         return projectService.getProjectById(id);
     }

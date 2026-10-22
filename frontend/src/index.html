@@ -1,13 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
+
 <head>
   <meta charset="utf-8">
-  <title>Frontend</title>
+  <title>Olysea — Independent Digital Solutions Platform</title>
   <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description"
+    content="Olysea designs and builds thoughtful digital experiences and software solutions that help businesses move forward.">
+  <script>
+    try {
+      if (localStorage.getItem("olysea-lang") === "ar") {
+        document.documentElement.lang = "ar";
+        document.documentElement.dir = "rtl";
+      }
+      const theme = localStorage.getItem("olysea-theme");
+      if (theme === "light" || theme === "dark") {
+        document.documentElement.setAttribute("data-theme", theme);
+      }
+    } catch (e) { }
+  </script>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Cairo:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
   <app-root></app-root>
 </body>
+
 </html>

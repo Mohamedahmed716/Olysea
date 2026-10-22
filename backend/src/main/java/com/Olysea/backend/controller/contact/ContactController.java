@@ -1,8 +1,8 @@
-
 package com.Olysea.backend.controller.contact;
 
 import com.Olysea.backend.controller.contact.dto.ContactMessageRequest;
 import com.Olysea.backend.controller.contact.dto.ContactMessageResponse;
+import com.Olysea.backend.controller.contact.dto.ContactStatusRequest;
 import com.Olysea.backend.service.contact.ContactService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -40,6 +40,15 @@ public class ContactController {
             @PathVariable Long id) {
 
         return ResponseEntity.ok(contactService.getContactById(id));
+    }
+
+    @PatchMapping("/admin/contacts/{id}")
+    public ResponseEntity<ContactMessageResponse> updateContactStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody ContactStatusRequest request) {
+
+        ContactMessageResponse response = contactService.updateContactStatus(id, request.status());
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/admin/contacts/{id}")

@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.service.olyseaservice;
 
 import com.Olysea.backend.common.exception.ResourceNotFoundException;
@@ -41,8 +40,7 @@ public class OlyseaServiceService {
 
         OlyseaService service = new OlyseaService();
 
-        service.setTitle(request.title().trim());
-        service.setDescription(request.description().trim());
+        applyRequest(service, request);
 
         OlyseaService savedService = serviceRepository.save(service);
 
@@ -56,8 +54,7 @@ public class OlyseaServiceService {
 
         OlyseaService service = findService(id);
 
-        service.setTitle(request.title().trim());
-        service.setDescription(request.description().trim());
+        applyRequest(service, request);
 
         OlyseaService updatedService = serviceRepository.save(service);
 
@@ -68,6 +65,22 @@ public class OlyseaServiceService {
     public void deleteService(Long id) {
         OlyseaService service = findService(id);
         serviceRepository.delete(service);
+    }
+
+    private void applyRequest(OlyseaService service, OlyseaServiceRequest request) {
+        service.setTitle(request.title().trim());
+        service.setDescription(request.description().trim());
+        service.setExtra(trimToNull(request.extra()));
+        service.setTitleAr(trimToNull(request.titleAr()));
+        service.setDescriptionAr(trimToNull(request.descriptionAr()));
+        service.setExtraAr(trimToNull(request.extraAr()));
+    }
+
+    private String trimToNull(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        return value.trim();
     }
 
     private OlyseaService findService(Long id) {
@@ -81,6 +94,10 @@ public class OlyseaServiceService {
                 service.getId(),
                 service.getTitle(),
                 service.getDescription(),
+                service.getExtra(),
+                service.getTitleAr(),
+                service.getDescriptionAr(),
+                service.getExtraAr(),
                 service.getCreatedAt());
     }
 }

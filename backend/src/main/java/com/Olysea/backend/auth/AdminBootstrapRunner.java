@@ -1,5 +1,6 @@
 package com.Olysea.backend.auth;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,19 +18,25 @@ public class AdminBootstrapRunner implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final String bootstrapEmail;
+    private final String bootstrapPassword;
 
     public AdminBootstrapRunner(
             UserRepository userRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            @Value("${olysea.bootstrap-admin.email:${ADMIN_EMAIL:admin@olysea.tech}}") String bootstrapEmail,
+            @Value("${olysea.bootstrap-admin.password:${ADMIN_PASSWORD:Admin@Olysea2026!}}") String bootstrapPassword) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.bootstrapEmail = bootstrapEmail;
+        this.bootstrapPassword = bootstrapPassword;
     }
 
     @Override
     @Transactional
     public void run(String... args) {
-        String email = System.getenv("ADMIN_EMAIL");
-        String password = System.getenv("ADMIN_PASSWORD");
+        String email = bootstrapEmail;
+        String password = bootstrapPassword;
 
         if (email == null || email.isBlank()) {
             throw new IllegalStateException(

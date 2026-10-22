@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.service.project;
 
 import com.Olysea.backend.common.exception.ResourceNotFoundException;
@@ -23,7 +22,7 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     public List<ProjectResponse> getAllProjects() {
-        return projectRepository.findAll()
+        return projectRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -37,12 +36,7 @@ public class ProjectService {
     @Transactional
     public ProjectResponse createProject(ProjectRequest request) {
         Project project = new Project();
-
-        project.setTitle(request.title().trim());
-        project.setDescription(request.description().trim());
-        project.setImageUrl(normalizeOptional(request.imageUrl()));
-        project.setProjectUrl(normalizeOptional(request.projectUrl()));
-
+        applyRequest(project, request);
         return toResponse(projectRepository.save(project));
     }
 
@@ -52,12 +46,7 @@ public class ProjectService {
             ProjectRequest request) {
 
         Project project = findProject(id);
-
-        project.setTitle(request.title().trim());
-        project.setDescription(request.description().trim());
-        project.setImageUrl(normalizeOptional(request.imageUrl()));
-        project.setProjectUrl(normalizeOptional(request.projectUrl()));
-
+        applyRequest(project, request);
         return toResponse(projectRepository.save(project));
     }
 
@@ -65,6 +54,22 @@ public class ProjectService {
     public void deleteProject(Long id) {
         Project project = findProject(id);
         projectRepository.delete(project);
+    }
+
+    private void applyRequest(Project project, ProjectRequest request) {
+        String name = request.effectiveName();
+        if (!name.isBlank()) {
+            project.setName(name);
+        }
+        if (request.description() != null) {
+            project.setDescription(request.description().trim());
+        }
+        project.setCategory(normalizeOptional(request.category()));
+        project.setUrl(normalizeOptional(request.effectiveUrl()));
+        project.setImage(normalizeOptional(request.effectiveImage()));
+        project.setPreviewKey(normalizeOptional(request.previewKey()));
+        project.setCategoryAr(normalizeOptional(request.categoryAr()));
+        project.setDescriptionAr(normalizeOptional(request.descriptionAr()));
     }
 
     private Project findProject(Long id) {
@@ -76,10 +81,17 @@ public class ProjectService {
     private ProjectResponse toResponse(Project project) {
         return new ProjectResponse(
                 project.getId(),
+                project.getCategory(),
+                project.getName(),
                 project.getTitle(),
                 project.getDescription(),
-                project.getImageUrl(),
+                project.getUrl(),
                 project.getProjectUrl(),
+                project.getImage(),
+                project.getImageUrl(),
+                project.getPreviewKey(),
+                project.getCategoryAr(),
+                project.getDescriptionAr(),
                 project.getCreatedAt());
     }
 

@@ -1,1 +1,262 @@
-<p>home works!</p>
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section class="hero" id="home" #hero (pointermove)="onPointer($event, hero)" [style.--mx]="mx()" [style.--my]="my()">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>
+        {{ i18n.t('h.a') }}
+        <span class="swap">
+          @for (w of i18n.swapWords(); track w) { <b class="sz" aria-hidden="true">{{ w }}</b> }
+          <span [class.out]="swapOut()" [class.pre]="swapPre()">{{ swapWord() }}</span>
+        </span>
+        {{ i18n.t('h.b') }}
+      </h1>
+      <p class="lead">{{ i18n.t('h.lead') }}</p>
+      <div class="ctas">
+        <a class="btn pri" href="#demos"><span>{{ i18n.t('h.c1') }}</span> <span class="ar" aria-hidden="true">→</span></a>
+        <a class="btn" href="#contact">{{ i18n.t('h.c2') }}</a>
+      </div>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <svg class="stk" style="--d:46;--r:12deg;top:-8px;right:-6px" width="92" height="92" viewBox="0 0 92 92">
+        <circle cx="46" cy="46" r="42" fill="#8ecbff" stroke="#12163f" stroke-width="3" />
+        <circle cx="46" cy="46" r="16" fill="#12163f" />
+      </svg>
+      <svg class="stk" style="--d:-34;--r:-10deg;left:-12px;bottom:34px" width="76" height="76" viewBox="0 0 76 76">
+        <rect x="4" y="4" width="68" height="68" fill="#3a52ff" stroke="#12163f" stroke-width="3" />
+        <path d="M4 72L72 4" stroke="#fbf0dc" stroke-width="4" />
+      </svg>
+      <svg class="stk" style="--d:28;--r:8deg;right:34px;bottom:-12px" width="120" height="62" viewBox="0 0 120 62">
+        <path d="M3 60a57 57 0 01114 0z" fill="#ff9ecb" stroke="#12163f" stroke-width="3" />
+      </svg>
+      <div class="ui">
+        <div class="bar"><i></i><i></i><i></i><span>brief.olysea / new-project</span></div>
+        <div class="body">
+          @for (key of rows; track key; let i = $index) {
+          <div class="row">
+            <span>{{ i18n.t(key) }}@if (i === 2) {<span class="cur"></span>}</span>
+            <span class="chip" [attr.data-s]="chips()[i]">{{ i18n.t('ui.s' + chips()[i]) }}</span>
+          </div>
+          }
+          <div class="pbw"><b [style.width.%]="progress()"></b></div>
+          <svg viewBox="0 0 300 70">
+            <rect x="0" y="40" width="60" height="30" fill="#8ecbff" stroke="#12163f" stroke-width="2" />
+            <rect x="70" y="20" width="60" height="50" fill="#9d8cff" stroke="#12163f" stroke-width="2" />
+            <circle cx="175" cy="38" r="30" fill="#c4b0ff" stroke="#12163f" stroke-width="2" />
+            <path d="M220 70V10l80 60z" fill="#3a52ff" stroke="#12163f" stroke-width="2" />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="mq" aria-hidden="true">
+  <div class="mq-in">
+    @for (n of [0, 1, 2, 3]; track n) {
+    @for (w of i18n.marquee(); track w) { <span>{{ w }}</span><i>◆</i> }
+    }
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ ABOUT ══════════════════════════════ -->
+<section class="about" id="about">
+  <div class="wrap">
+    <h2 appReveal>{{ i18n.t('a.h2') }}</h2>
+    <p class="lede" #ledeRef [attr.aria-label]="i18n.t('a.lede')">
+      @for (w of ledeWords(); track $index; let i = $index) {
+        <span class="w" [class.on]="i < ledeLit()" aria-hidden="true">{{ w }}</span>{{ ' ' }}
+      }
+    </p>
+
+    <div class="pr">
+      <div class="pr-list">
+        @for (p of principles; track p.n; let i = $index) {
+          <button class="pr-b" type="button" [style.--dc]="p.color" [attr.aria-pressed]="currentPrinciple() === i"
+                  (mouseenter)="selectPrinciple(i)" (focus)="selectPrinciple(i)" (click)="selectPrinciple(i)">
+            <h3>{{ i18n.t('pr' + p.n + 't') }}</h3>
+            <p>{{ i18n.t('pr' + p.n + 'p') }}</p>
+          </button>
+        }
+      </div>
+
+      <div class="pr-stage" aria-hidden="true">
+        <svg viewBox="0 0 400 400">
+          <g class="sh" [class.on]="currentPrinciple() === 0"><circle cx="200" cy="200" r="160" fill="none" stroke="#fbf0dc" stroke-width="4"/><circle cx="200" cy="200" r="112" fill="#c4b0ff" stroke="#12163f" stroke-width="4"/><circle cx="200" cy="200" r="62" fill="#8ecbff" stroke="#12163f" stroke-width="4"/><circle cx="200" cy="200" r="14" fill="#12163f"/></g>
+          <g class="sh" [class.on]="currentPrinciple() === 1"><g stroke="#12163f" stroke-width="4"><rect x="62" y="62" width="82" height="82" fill="#fbf0dc"/><rect x="159" y="62" width="82" height="82" fill="#8ecbff"/><rect x="256" y="62" width="82" height="82" fill="#ff9ecb"/><rect x="62" y="159" width="82" height="82" fill="#ff9ecb"/><rect x="159" y="159" width="82" height="82" fill="#fbf0dc"/><rect x="256" y="159" width="82" height="82" fill="#8ecbff"/><rect x="62" y="256" width="82" height="82" fill="#8ecbff"/><rect x="159" y="256" width="82" height="82" fill="#ff9ecb"/><rect x="256" y="256" width="82" height="82" fill="#fbf0dc"/></g></g>
+          <g class="sh" [class.on]="currentPrinciple() === 2"><polygon points="50,340 50,280 130,280 130,215 210,215 210,150 290,150 290,90 350,90 350,340" fill="#9d8cff" stroke="#12163f" stroke-width="4"/><circle cx="320" cy="52" r="24" fill="#8ecbff" stroke="#12163f" stroke-width="4"/><path d="M60 330L330 70" stroke="#fbf0dc" stroke-width="4" stroke-dasharray="4 12" stroke-linecap="round"/></g>
+          <g class="sh" [class.on]="currentPrinciple() === 3"><g class="rot"><circle cx="200" cy="200" r="130" fill="none" stroke="#fbf0dc" stroke-width="4" stroke-dasharray="10 14"/><g stroke="#12163f" stroke-width="4"><circle cx="330" cy="200" r="28" fill="#ff9ecb"/><circle cx="200" cy="70" r="22" fill="#8ecbff"/><circle cx="108" cy="292" r="26" fill="#c4b0ff"/></g></g><circle cx="200" cy="200" r="52" fill="#9d8cff" stroke="#12163f" stroke-width="4"/></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ SERVICES ═══════════════════════════ -->
+<section class="svc-section page-section" id="services">
+  <div class="wrap">
+    <h2 appReveal>{{ i18n.t('s.h2') }}</h2>
+    @if (servicesLoading()) {
+      <app-loading [label]="i18n.t('load')" />
+    } @else {
+      <div class="svc-list">
+        @for (s of services(); track s.id ?? $index; let i = $index) {
+          <div class="svc" appReveal tabindex="0" [style.--c]="'var(--c' + (i % 5) + ')'">
+            <span class="n">{{ i + 1 }}</span>
+            <div><h3>{{ i18n.pick(s.title, s.titleAr) }}</h3></div>
+            <p>
+              <span>{{ i18n.pick(s.description, s.descriptionAr) }}</span>
+              @if (s.extra) { <span class="extra">{{ i18n.pick(s.extra, s.extraAr) }}</span> }
+            </p>
+            <span class="ar" aria-hidden="true">→</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ DEMOS ════════════════════════════════ -->
+<section class="demos-section" id="demos">
+  <app-projects />
+</section>
+
+<!-- ═══════════════════════════════ PROCESS ══════════════════════════════ -->
+<section class="page-section" id="process">
+  <div class="wrap">
+    <h2 appReveal>{{ i18n.t('p.h2') }}</h2>
+    <div class="steps" role="tablist" [attr.aria-label]="i18n.t('a.proc')" [style.--p]="step()" [style.--dur]="stepDur">
+      @for (s of steps(); track $index; let i = $index) {
+      <button class="st" role="tab" type="button" [id]="'t' + i" aria-controls="sd" [attr.aria-selected]="step() === i"
+        [attr.tabindex]="step() === i ? 0 : -1" [class.done]="i < step()" (click)="selectStep(i)"
+        (keydown)="onStepKey($event, i)">
+        <div class="m">0{{ i + 1 }}</div>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.short }}</p>
+        <span class="tm"><b [class.paused]="isStepsPaused()"></b></span>
+      </button>
+      }
+    </div>
+
+    <div class="sd" id="sd" role="tabpanel" aria-live="polite" [attr.aria-labelledby]="'t' + step()"
+      [attr.data-step]="step()" (mouseenter)="pauseSteps(true)" (mouseleave)="pauseSteps(false)">
+      @for (k of [step()]; track k) {
+      <div class="big in">0{{ step() + 1 }}</div>
+      <div class="in">
+        <h3>{{ current().title }}</h3>
+        <p>{{ current().detail }}</p>
+      </div>
+      <ul class="in">
+        @for (b of current().bullets; track b) { <li>{{ b }}</li> }
+      </ul>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ WHY ═══════════════════════════════ -->
+<section class="page-section">
+  <div class="wrap">
+    <h2 appReveal>{{ i18n.t('w.h2') }}</h2>
+    <div class="why">
+      @for (n of why; track n) {
+      <article appReveal>
+        <h3>{{ i18n.t('w' + n + 'a') }}<em>{{ i18n.t('w' + n + 'b') }}</em></h3>
+        <p>{{ i18n.t('w' + n + 'p') }}</p>
+      </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ CONTACT ══════════════════════════════ -->
+<section class="contact" id="contact">
+  <div class="wrap grid">
+    <div>
+      <h2>{{ i18n.t('c.h2') }}</h2>
+      <p class="sub">{{ i18n.t('c.sub') }}</p>
+      <div class="info">
+        <a [href]="'mailto:' + site.email">{{ site.email }}</a>
+        <a [href]="site.linkedin">{{ i18n.t('c.s1') }}</a>
+        <a [href]="site.instagram">{{ i18n.t('c.s2') }}</a>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate aria-describedby="status">
+      <div class="f" [class.bad]="error('name')">
+        <label for="name">{{ i18n.t('f.name') }}</label>
+        <input id="name" formControlName="name" autocomplete="name" [attr.aria-invalid]="!!error('name')">
+        <span class="err">{{ error('name') ? i18n.t(error('name')) : '' }}</span>
+      </div>
+
+      <div class="f" [class.bad]="error('email')">
+        <label for="email">{{ i18n.t('f.email') }}</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" [attr.aria-invalid]="!!error('email')">
+        <span class="err">{{ error('email') ? i18n.t(error('email')) : '' }}</span>
+      </div>
+
+      <div class="f">
+        <label for="biz">{{ i18n.t('f.biz') }} <small>{{ i18n.t('f.opt') }}</small></label>
+        <input id="biz" formControlName="business" autocomplete="organization">
+      </div>
+
+      <div class="f" [class.bad]="error('type')">
+        <label for="type-trigger">{{ i18n.t('f.type') }}</label>
+        <div class="custom-select-wrap" [class.open]="typeDropdownOpen()">
+          <button
+            type="button"
+            id="type-trigger"
+            class="custom-select-btn"
+            [class.placeholder]="!selectedType()"
+            [attr.aria-expanded]="typeDropdownOpen()"
+            aria-haspopup="listbox"
+            (click)="toggleTypeDropdown()"
+          >
+            <span>{{ selectedTypeLabel() || i18n.t('f.choose') }}</span>
+            <svg class="cs-arrow" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+
+          @if (typeDropdownOpen()) {
+            <ul class="custom-select-list" role="listbox" [attr.aria-label]="i18n.t('f.type')">
+              @for (t of types; track t.value) {
+                <li
+                  role="option"
+                  [attr.aria-selected]="selectedType() === t.value"
+                  [class.selected]="selectedType() === t.value"
+                  (click)="selectType(t.value)"
+                >
+                  <span class="cs-dot" aria-hidden="true"></span>
+                  <span class="cs-text">{{ i18n.t(t.key) }}</span>
+                  @if (selectedType() === t.value) {
+                    <svg class="cs-check" width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path d="M4 10.5L8 14.5L16 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        <input type="hidden" formControlName="type">
+        <span class="err">{{ error('type') ? i18n.t(error('type')) : '' }}</span>
+      </div>
+
+      <div class="f" [class.bad]="error('message')">
+        <label for="msg">{{ i18n.t('f.msg') }}</label>
+        <textarea id="msg" formControlName="message" [attr.aria-invalid]="!!error('message')"></textarea>
+        <span class="err">{{ error('message') ? i18n.t(error('message')) : '' }}</span>
+      </div>
+
+      <input class="hp" formControlName="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <button class="btn pri" type="submit" [disabled]="sending()">
+        @if (sending()) { <span class="spin" aria-hidden="true"></span> }
+        <span>{{ i18n.t(sending() ? 'f.sending' : 'f.send') }}</span>
+      </button>
+
+      <div class="msg" id="status" role="status" aria-live="polite" [class.show]="status()" [class.ok]="statusOk()" [class.no]="!statusOk()">{{ status() }}</div>
+    </form>
+  </div>
+</section>

@@ -1,5 +1,11 @@
-import { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { map } from 'rxjs';
+import { Auth } from '../services/auth';
 
-export const authGuard: CanActivateFn = (route, state) => {
-  return true;
+/** Protects /admin/** and /dashboard. Sends visitors without a valid session to the login page. */
+export const authGuard: CanActivateFn = () => {
+  const auth = inject(Auth);
+  const router = inject(Router);
+  return auth.check().pipe(map((ok) => (ok ? true : router.createUrlTree(['/admin/login']))));
 };

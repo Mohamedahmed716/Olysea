@@ -1,1 +1,13 @@
-<p>user-dashboard works!</p>
+<div class="bar">
+  <div class="wrap row">
+    <span class="badge"><i></i> Editing mode</span>
+    <span class="who">{{ auth.user()?.email }}</span>
+    <nav class="acts" aria-label="Admin">
+      <a class="btn" routerLink="/">View site</a>
+      <a class="btn" routerLink="/admin">Admin panel</a>
+      <button class="btn" type="button" (click)="auth.logout()">Sign out</button>
+    </nav>
+  </div>
+</div>
+
+<app-projects [editable]="true" />

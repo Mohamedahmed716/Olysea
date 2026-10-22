@@ -1,1 +1,100 @@
-<p>projects works!</p>
+<div class="ad-head">
+  <div>
+    <h1>Projects</h1>
+    <p>Manage the demo projects shown on the public site carousel.</p>
+  </div>
+  <button class="btn pri" type="button" (click)="openForm(null)">+ Add project</button>
+</div>
+
+@if (loading()) {
+  <app-loading />
+} @else if (failed()) {
+  <div class="panel ad-empty">Could not load projects. Check that the server is running, then refresh.</div>
+} @else if (!items().length) {
+  <div class="panel ad-empty">
+    <p>No projects yet.</p>
+    <button class="btn" type="button" (click)="importDefaults()">Import the 6 starter demos</button>
+  </div>
+} @else {
+  <div class="grid">
+    @for (p of items(); track p.id) {
+      <article class="pcard">
+        <div class="thumb"><app-project-preview [project]="p" /></div>
+        <div class="body">
+          <small>{{ p.category }}</small>
+          <h3>{{ p.name }}</h3>
+          <p>{{ p.description }}</p>
+          <a class="link" [href]="p.url" target="_blank" rel="noopener">{{ p.url }}</a>
+          <div class="btns">
+            <button class="btn mini" type="button" (click)="openForm(p)">Edit</button>
+            <button class="btn mini dng" type="button" (click)="askDelete(p)">Delete</button>
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+}
+
+<dialog class="dlg" #dialog aria-labelledby="pt">
+  <h3 id="pt">{{ editing() ? 'Edit project' : 'Add a project' }}</h3>
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="two">
+      <div class="f" [class.bad]="invalid('category')">
+        <label for="p-cat">Category</label>
+        <input id="p-cat" formControlName="category" placeholder="e.g. Law Firm" autocomplete="off">
+        @if (invalid('category')) { <div class="err" role="alert">Enter a category.</div> }
+      </div>
+      <div class="f" [class.bad]="invalid('name')">
+        <label for="p-name">Project name</label>
+        <input id="p-name" formControlName="name" autocomplete="off">
+        @if (invalid('name')) { <div class="err" role="alert">Enter a project name.</div> }
+      </div>
+    </div>
+    <div class="f" [class.bad]="invalid('description')">
+      <label for="p-desc">Short description</label>
+      <textarea id="p-desc" formControlName="description"></textarea>
+      @if (invalid('description')) { <div class="err" role="alert">Write a short description (at least 10 characters).</div> }
+    </div>
+    <div class="f" [class.bad]="invalid('url')">
+      <label for="p-url">Demo link</label>
+      <input id="p-url" type="url" formControlName="url" placeholder="https://demo-example.olysea.tech" autocomplete="off">
+      @if (invalid('url')) { <div class="err" role="alert">Enter a full link starting with https://</div> }
+    </div>
+
+    <div class="f" [class.bad]="imageError()">
+      <label for="p-img">Photo of the demo</label>
+      <input id="p-img" type="file" accept="image/*" (change)="onFile($event)">
+      <span class="hintt">A 16:10 screenshot works best. Or leave it empty and choose a built-in preview below.</span>
+      @if (image(); as img) {
+        <img class="pvimg on" [src]="img" alt="Preview of the selected photo">
+        <button type="button" class="btn mini" (click)="clearImage()">Remove photo</button>
+      }
+      <div class="err" role="alert">{{ imageError() }}</div>
+    </div>
+    <div class="f">
+      <label for="p-key">Built-in preview <small>(used when there is no photo)</small></label>
+      <select id="p-key" formControlName="previewKey">
+        <option value="">None</option>
+        @for (k of previewKeys; track k) { <option [value]="k">{{ k }}</option> }
+      </select>
+    </div>
+
+    <div class="sect">Arabic version (optional)</div>
+    <div class="f"><label for="p-car">Category (Arabic)</label><input id="p-car" formControlName="categoryAr" dir="rtl" autocomplete="off"></div>
+    <div class="f"><label for="p-dar">Description (Arabic)</label><textarea id="p-dar" formControlName="descriptionAr" dir="rtl"></textarea></div>
+
+    <div class="acts">
+      <button type="button" class="btn" (click)="closeForm()">Cancel</button>
+      <button type="submit" class="btn pri" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save project' }}</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dlg" #delDialog aria-labelledby="pdt">
+  <h3 id="pdt">Delete this project?</h3>
+  <p>“{{ toDelete()?.name }}” will be removed from the website.</p>
+  <div class="acts">
+    <button type="button" class="btn" (click)="cancelDelete()">Keep it</button>
+    <button type="button" class="btn dng" (click)="confirmDelete()">Delete project</button>
+  </div>
+</dialog>

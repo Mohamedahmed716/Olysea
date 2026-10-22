@@ -1,1 +1,31 @@
-<p>about works!</p>
+<section class="about">
+  <div class="wrap">
+    <h2 appReveal>{{ i18n.t('a.h2') }}</h2>
+    <p class="lede" #lede [attr.aria-label]="i18n.t('a.lede')">
+      @for (w of words(); track $index; let i = $index) {
+        <span class="w" [class.on]="i < lit()" aria-hidden="true">{{ w }}</span>{{ ' ' }}
+      }
+    </p>
+
+    <div class="pr">
+      <div class="pr-list">
+        @for (p of principles; track p.n; let i = $index) {
+          <button class="pr-b" type="button" [style.--dc]="p.color" [attr.aria-pressed]="current() === i"
+                  (mouseenter)="select(i)" (focus)="select(i)" (click)="select(i)">
+            <h3>{{ i18n.t('pr' + p.n + 't') }}</h3>
+            <p>{{ i18n.t('pr' + p.n + 'p') }}</p>
+          </button>
+        }
+      </div>
+
+      <div class="pr-stage" aria-hidden="true">
+        <svg viewBox="0 0 400 400">
+          <g class="sh" [class.on]="current() === 0"><circle cx="200" cy="200" r="160" fill="none" stroke="#fbf0dc" stroke-width="4"/><circle cx="200" cy="200" r="112" fill="#c4b0ff" stroke="#12163f" stroke-width="4"/><circle cx="200" cy="200" r="62" fill="#8ecbff" stroke="#12163f" stroke-width="4"/><circle cx="200" cy="200" r="14" fill="#12163f"/></g>
+          <g class="sh" [class.on]="current() === 1"><g stroke="#12163f" stroke-width="4"><rect x="62" y="62" width="82" height="82" fill="#fbf0dc"/><rect x="159" y="62" width="82" height="82" fill="#8ecbff"/><rect x="256" y="62" width="82" height="82" fill="#ff9ecb"/><rect x="62" y="159" width="82" height="82" fill="#ff9ecb"/><rect x="159" y="159" width="82" height="82" fill="#fbf0dc"/><rect x="256" y="159" width="82" height="82" fill="#8ecbff"/><rect x="62" y="256" width="82" height="82" fill="#8ecbff"/><rect x="159" y="256" width="82" height="82" fill="#ff9ecb"/><rect x="256" y="256" width="82" height="82" fill="#fbf0dc"/></g></g>
+          <g class="sh" [class.on]="current() === 2"><polygon points="50,340 50,280 130,280 130,215 210,215 210,150 290,150 290,90 350,90 350,340" fill="#9d8cff" stroke="#12163f" stroke-width="4"/><circle cx="320" cy="52" r="24" fill="#8ecbff" stroke="#12163f" stroke-width="4"/><path d="M60 330L330 70" stroke="#fbf0dc" stroke-width="4" stroke-dasharray="4 12" stroke-linecap="round"/></g>
+          <g class="sh" [class.on]="current() === 3"><g class="rot"><circle cx="200" cy="200" r="130" fill="none" stroke="#fbf0dc" stroke-width="4" stroke-dasharray="10 14"/><g stroke="#12163f" stroke-width="4"><circle cx="330" cy="200" r="28" fill="#ff9ecb"/><circle cx="200" cy="70" r="22" fill="#8ecbff"/><circle cx="108" cy="292" r="26" fill="#c4b0ff"/></g></g><circle cx="200" cy="200" r="52" fill="#9d8cff" stroke="#12163f" stroke-width="4"/></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>

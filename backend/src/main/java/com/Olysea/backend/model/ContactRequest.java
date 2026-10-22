@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.model;
 
 import jakarta.persistence.*;
@@ -23,6 +22,7 @@ public class ContactRequest {
         this.email = email;
         this.subject = subject;
         this.message = message;
+        this.status = "NEW";
     }
 
     @Id
@@ -40,6 +40,14 @@ public class ContactRequest {
     @Column(nullable = false, length = 254)
     private String email;
 
+    @Size(max = 150)
+    @Column(length = 150)
+    private String business;
+
+    @Size(max = 100)
+    @Column(length = 100)
+    private String type;
+
     @Size(max = 200)
     @Column(length = 200)
     private String subject;
@@ -49,6 +57,9 @@ public class ContactRequest {
     @Column(nullable = false, length = 5000)
     private String message;
 
+    @Column(length = 20)
+    private String status = "NEW";
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -56,6 +67,9 @@ public class ContactRequest {
     protected void onCreate() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
+        }
+        if (status == null || status.isBlank()) {
+            status = "NEW";
         }
     }
 }

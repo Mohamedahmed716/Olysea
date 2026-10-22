@@ -1,0 +1,22 @@
+:host { display: block; --c0: var(--a2); --c1: var(--a4); --c2: var(--a5); --c3: var(--a3); --c4: var(--acc); }
+.svc-section { padding: var(--s5) 0 var(--s6); min-height: 70vh; }
+.svc-list { margin-top: var(--s5); border-top: 1.5px solid var(--ink); }
+.svc { display: grid; grid-template-columns: 90px 1.2fr 1fr 40px; gap: var(--s3); align-items: center; padding: var(--s4) 0; border-bottom: 1px solid var(--line); position: relative; --sh: clamp(12px, 4vw, 56px); }
+.svc::before { content: ''; position: absolute; inset-inline-start: 0; bottom: -1px; height: 5px; width: 0; background: var(--c); transition: width .5s; }
+.svc:hover::before, .svc:focus-within::before, .svc:focus::before { width: 100%; }
+.svc > * { transition: transform .8s cubic-bezier(.22, 1, .36, 1); }
+.svc > :nth-child(2) { transition-delay: .04s; } .svc > :nth-child(3) { transition-delay: .08s; } .svc > :nth-child(4) { transition-delay: .12s; }
+.svc:hover > *, .svc:focus-within > *, .svc:focus > * { transform: translateX(calc(var(--sh) * var(--dir))); }
+.svc .n { font: 800 20px var(--fd); width: 48px; height: 48px; border-radius: 50%; background: var(--c); border: 2px solid var(--ink); display: grid; place-items: center; color: #12163f; }
+.svc h3 { font-size: clamp(28px, 3.6vw, 52px); letter-spacing: -.03em; }
+.svc p { color: var(--mute); }
+.svc .ar { font-size: 28px; transition: transform .8s cubic-bezier(.22, 1, .36, 1) .12s; }
+html[dir='rtl'] .svc .ar { scale: -1 1; }
+.svc:hover .ar, .svc:focus-within .ar, .svc:focus .ar { transform: translateX(calc((var(--sh) + 6px) * var(--dir))) rotate(-45deg); }
+.svc .extra { display: block; font-size: 14px; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; color: var(--ink); font-weight: 500; transition: max-height .7s cubic-bezier(.22, 1, .36, 1), opacity .5s ease, margin-top .7s cubic-bezier(.22, 1, .36, 1); }
+.svc:hover .extra, .svc:focus-within .extra, .svc:focus .extra { max-height: 60px; opacity: 1; margin-top: 8px; }
+@media (max-width: 900px) {
+  .svc { grid-template-columns: 44px 1fr 24px; gap: 12px; --sh: 0px; }
+  .svc p { grid-column: 2 / 4; }
+  .svc .extra { max-height: 60px; opacity: 1; margin-top: 8px; }
+}
