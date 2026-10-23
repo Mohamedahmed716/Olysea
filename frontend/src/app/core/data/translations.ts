@@ -55,6 +55,7 @@ const en: Record<string, string> = {
   'err.type': 'Choose a project type.', 'err.msg': 'Tell us a little more (at least 10 characters).',
   'm.fix': 'Please fix the highlighted fields and try again.',
   'm.ok': 'Thanks. We received your message and will reply by email.',
+  'm.limit': 'Daily limit reached (maximum 2 messages per day). Please try again tomorrow or email hello@olysea.tech.',
   'm.err': 'Something went wrong and your message was not sent. Try again, or email hello@olysea.tech.',
   // footer
   'ft.p': 'An independent platform designing and building websites, web applications, and software for growing businesses.',
@@ -102,6 +103,7 @@ const ar: Record<string, string> = {
   'err.type': 'اختر نوع المشروع.', 'err.msg': 'أخبرنا بالمزيد (10 أحرف على الأقل).',
   'm.fix': 'يرجى تصحيح الحقول المظللة والمحاولة مرة أخرى.',
   'm.ok': 'شكراً لك. استلمنا رسالتك وسنرد عليك عبر البريد الإلكتروني.',
+  'm.limit': 'تم الوصول إلى الحد الأقصى اليومي (رسالتان في اليوم). يرجى المحاولة غداً أو مراسلتنا على hello@olysea.tech.',
   'm.err': 'حدث خطأ ولم تُرسل رسالتك. حاول مرة أخرى، أو راسلنا على hello@olysea.tech.',
   'ft.p': 'منصة مستقلة تصمم وتبني المواقع وتطبيقات الويب والبرمجيات للأعمال النامية.',
   'ft.explore': 'استكشف', 'ft.hello': 'قل مرحباً', 'ft.rights': 'Olysea. جميع الحقوق محفوظة.', 'ft.made': 'صُنع بعناية وقصد',

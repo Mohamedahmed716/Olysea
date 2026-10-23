@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
+    "build:backend": "ng build && powershell -Command \"Copy-Item -Path dist/frontend/browser/* -Destination ../backend/src/main/resources/static/ -Recurse -Force\"",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

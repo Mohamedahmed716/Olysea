@@ -131,6 +131,25 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/auth/logout", "/api/admin/logout").authenticated()
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/favicon.ico",
+                                "/*.js",
+                                "/*.css",
+                                "/*.png",
+                                "/*.svg",
+                                "/*.jpg",
+                                "/*.jpeg",
+                                "/*.woff2",
+                                "/*.woff",
+                                "/*.ttf",
+                                "/assets/**",
+                                "/dashboard",
+                                "/dashboard/**",
+                                "/admin",
+                                "/admin/**"
+                        ).permitAll()
                         .anyRequest().denyAll())
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint(apiSecurityErrorHandler)

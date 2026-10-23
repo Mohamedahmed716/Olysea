@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -35,8 +36,11 @@ public class RateLimitingFilter extends OncePerRequestFilter {
     @Value("${olysea.rate-limiting.public-limit:60}")
     private int publicLimit;
 
-    @Value("${olysea.rate-limiting.contact-limit:5}")
+    @Value("${olysea.rate-limiting.contact-limit:2}")
     private int contactLimit;
+
+    @Value("${olysea.rate-limiting.contact-window-seconds:86400}")
+    private long contactWindowSeconds;
 
     @Value("${olysea.rate-limiting.admin-limit:120}")
     private int adminLimit;
@@ -67,12 +71,12 @@ public class RateLimitingFilter extends OncePerRequestFilter {
             return;
         }
 
-        String clientIp = request.getRemoteAddr();
+        String clientIp = getClientIp(request);
         SlidingWindowRateLimiter.RateLimitResult result = null;
 
         if ("/api/contact".equals(uri) && "POST".equalsIgnoreCase(method)) {
-            // Contact form: strict rate limiting to prevent spam / DB resource exhaustion
-            result = rateLimiter.tryAcquire("contact:ip:" + clientIp, contactLimit, windowSeconds);
+            // Contact form / Start conversation: max 2 requests per day per user
+            result = rateLimiter.tryAcquire("contact:ip:" + clientIp, contactLimit, contactWindowSeconds);
         } else if (uri.startsWith("/api/admin/")) {
             // Authenticated admin endpoints: user-based or session/IP based
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -96,7 +100,9 @@ public class RateLimitingFilter extends OncePerRequestFilter {
                     Instant.now(),
                     HttpStatus.TOO_MANY_REQUESTS.value(),
                     HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
-                    "Rate limit exceeded. Try again in " + result.retryAfterSeconds() + " seconds.",
+                    "/api/contact".equals(uri)
+                            ? "Daily limit reached (maximum 2 messages per day). Please try again tomorrow or email hello@olysea.tech."
+                            : "Rate limit exceeded. Try again in " + result.retryAfterSeconds() + " seconds.",
                     uri,
                     Map.of());
 
@@ -105,5 +111,18 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String cfConnectingIp = request.getHeader("CF-Connecting-IP");
+        if (StringUtils.hasText(cfConnectingIp)) {
+            return cfConnectingIp.trim();
+        }
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (StringUtils.hasText(xForwardedFor)) {
+            int commaIdx = xForwardedFor.indexOf(',');
+            return (commaIdx != -1 ? xForwardedFor.substring(0, commaIdx) : xForwardedFor).trim();
+        }
+        return request.getRemoteAddr();
     }
 }
