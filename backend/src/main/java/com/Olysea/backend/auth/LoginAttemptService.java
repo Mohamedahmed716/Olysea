@@ -3,44 +3,66 @@ package com.Olysea.backend.auth;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LoginAttemptService {
 
-    static final int MAX_ATTEMPTS = 5;
-    static final long WINDOW_SECONDS = 900;
+    public static final int MAX_ATTEMPTS = 5;
+    public static final long WINDOW_SECONDS = 60;
     private static final int MAX_TRACKED_KEYS = 10_000;
 
-    private final ConcurrentHashMap<String, AttemptWindow> attempts = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Deque<Long>> attempts = new ConcurrentHashMap<>();
 
     public boolean isBlocked(String key) {
-        AttemptWindow window = attempts.get(key);
-        if (window == null) {
-            return attempts.size() >= MAX_TRACKED_KEYS;
+        Deque<Long> timestamps = attempts.get(key);
+        if (timestamps == null) {
+            return false;
         }
-        synchronized (window) {
-            if (expired(window)) {
-                attempts.remove(key, window);
+        long now = Instant.now().getEpochSecond();
+        long windowStart = now - WINDOW_SECONDS;
+        synchronized (timestamps) {
+            pruneExpired(timestamps, windowStart);
+            if (timestamps.isEmpty()) {
+                attempts.remove(key, timestamps);
                 return false;
             }
-            return window.count >= MAX_ATTEMPTS;
+            return timestamps.size() >= MAX_ATTEMPTS;
+        }
+    }
+
+    public long getRetryAfterSeconds(String key) {
+        Deque<Long> timestamps = attempts.get(key);
+        if (timestamps == null) {
+            return WINDOW_SECONDS;
+        }
+        long now = Instant.now().getEpochSecond();
+        synchronized (timestamps) {
+            Long oldest = timestamps.peekFirst();
+            if (oldest == null) {
+                return WINDOW_SECONDS;
+            }
+            return Math.max(1, (oldest + WINDOW_SECONDS) - now);
         }
     }
 
     public void recordFailure(String key) {
-        purgeExpired();
-        attempts.compute(key, (ignored, existing) -> {
-            if (existing == null || expired(existing)) {
-                if (attempts.size() >= MAX_TRACKED_KEYS) {
-                    return null;
-                }
-                return new AttemptWindow();
+        long now = Instant.now().getEpochSecond();
+        long windowStart = now - WINDOW_SECONDS;
+
+        if (attempts.size() >= MAX_TRACKED_KEYS) {
+            purgeOldEntries(windowStart);
+        }
+
+        attempts.compute(key, (k, existing) -> {
+            Deque<Long> deque = existing != null ? existing : new ArrayDeque<>();
+            synchronized (deque) {
+                pruneExpired(deque, windowStart);
+                deque.addLast(now);
             }
-            synchronized (existing) {
-                existing.count++;
-            }
-            return existing;
+            return deque;
         });
     }
 
@@ -48,20 +70,24 @@ public class LoginAttemptService {
         attempts.remove(key);
     }
 
-    private void purgeExpired() {
-        attempts.forEach((key, window) -> {
-            if (expired(window)) {
-                attempts.remove(key, window);
+    public void reset() {
+        attempts.clear();
+    }
+
+    private void pruneExpired(Deque<Long> deque, long windowStart) {
+        while (!deque.isEmpty() && deque.peekFirst() <= windowStart) {
+            deque.removeFirst();
+        }
+    }
+
+    private void purgeOldEntries(long windowStart) {
+        attempts.forEach((k, deque) -> {
+            synchronized (deque) {
+                pruneExpired(deque, windowStart);
+                if (deque.isEmpty()) {
+                    attempts.remove(k, deque);
+                }
             }
         });
-    }
-
-    private boolean expired(AttemptWindow window) {
-        return Instant.now().getEpochSecond() - window.startedAt >= WINDOW_SECONDS;
-    }
-
-    private static final class AttemptWindow {
-        private final long startedAt = Instant.now().getEpochSecond();
-        private int count = 1;
     }
 }

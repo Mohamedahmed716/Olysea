@@ -1,10 +1,18 @@
-/** Reads an image file, scales it down to maxWidth and returns a JPEG data URL. */
+/** Reads an image file, validates MIME type and size, scales it down to maxWidth and returns a JPEG data URL. */
 export function fileToJpegDataUrl(file: File, maxWidth = 1200, quality = 0.82): Promise<string> {
   return new Promise((resolve, reject) => {
-    if (!file.type.startsWith('image/')) {
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedMimeTypes.includes(file.type)) {
       reject(new Error('Choose an image file (JPG, PNG or WebP).'));
       return;
     }
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_FILE_SIZE) {
+      reject(new Error('Image must be smaller than 5MB.'));
+      return;
+    }
+
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('Could not read that file. Try another image.'));
     reader.onload = () => {

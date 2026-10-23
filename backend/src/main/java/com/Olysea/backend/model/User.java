@@ -72,6 +72,13 @@ public class User {
         updatedAt = LocalDateTime.now();
     }
 
+    public void updatePasswordHash(String newPasswordHash) {
+        if (newPasswordHash == null || newPasswordHash.isBlank()) {
+            throw new IllegalArgumentException("Password hash cannot be blank");
+        }
+        this.passwordHash = newPasswordHash;
+    }
+
     public void disable() {
         this.enabled = false;
     }

@@ -21,17 +21,20 @@ export class ProjectPreview {
 
   readonly project = input.required<Project>();
 
-  protected readonly host = computed(() => this.project().url.replace(/^https?:\/\//, ''));
+  protected readonly host = computed(() => (this.project().url || '').replace(/^https?:\/\//, ''));
 
   protected readonly image = computed(() => {
     const img = this.project().image;
-    // only allow image data URLs or http(s) URLs
-    return img && /^(data:image\/|https?:\/\/)/i.test(img) ? img : null;
+    // Strictly allow only safe raster image data URLs (jpeg/png/webp) or http(s) URLs; reject SVG/scripts
+    if (!img) return null;
+    const isSafeDataUrl = /^data:image\/(jpeg|png|webp);base64,[a-zA-Z0-9+/=]+$/i.test(img);
+    const isSafeHttpUrl = /^https?:\/\/[a-zA-Z0-9-._~:/?#\[\]@!$&'()*+,;=]+$/i.test(img);
+    return isSafeDataUrl || isSafeHttpUrl ? img : null;
   });
 
   protected readonly illustration = computed<SafeHtml | null>(() => {
     const key = this.project().previewKey;
-    const html = key ? PREVIEWS[key] : undefined;
+    const html = key && Object.prototype.hasOwnProperty.call(PREVIEWS, key) ? PREVIEWS[key] : undefined;
     return html ? this.sanitizer.bypassSecurityTrustHtml(html) : null;
   });
 }

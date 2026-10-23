@@ -5,6 +5,7 @@ import com.Olysea.backend.controller.project.dto.ProjectResponse;
 import com.Olysea.backend.service.project.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,12 +31,14 @@ public class ProjectController {
 
     @PostMapping("/api/admin/projects")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public ProjectResponse createProject(
             @Valid @RequestBody ProjectRequest request) {
         return projectService.createProject(request);
     }
 
     @PutMapping("/api/admin/projects/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ProjectResponse updateProject(
             @PathVariable Long id,
             @Valid @RequestBody ProjectRequest request) {
@@ -44,6 +47,7 @@ public class ProjectController {
 
     @DeleteMapping("/api/admin/projects/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
     }

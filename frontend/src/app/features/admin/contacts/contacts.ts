@@ -64,7 +64,9 @@ export class Contacts {
   }
 
   protected reply(c: ContactRequest): string {
-    return 'mailto:' + c.email + '?subject=' + encodeURIComponent('Re: your Olysea enquiry (' + c.type + ')');
+    const safeEmail = encodeURIComponent(c.email || '').replace(/%40/g, '@');
+    const safeType = encodeURIComponent(c.type || 'General');
+    return 'mailto:' + safeEmail + '?subject=' + encodeURIComponent('Re: your Olysea enquiry (' + safeType + ')');
   }
 
   protected remove(): void {

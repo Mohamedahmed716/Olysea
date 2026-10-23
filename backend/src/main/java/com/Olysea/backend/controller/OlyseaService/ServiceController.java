@@ -7,6 +7,7 @@ import com.Olysea.backend.service.olyseaservice.OlyseaServiceService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class ServiceController {
     // Administrator endpoints
 
     @PostMapping("/admin/services")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OlyseaServiceResponse> createService(
             @Valid @RequestBody OlyseaServiceRequest request) {
 
@@ -46,6 +48,7 @@ public class ServiceController {
     }
 
     @PutMapping("/admin/services/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OlyseaServiceResponse> updateService(
             @PathVariable Long id,
             @Valid @RequestBody OlyseaServiceRequest request) {
@@ -55,6 +58,7 @@ public class ServiceController {
     }
 
     @DeleteMapping("/admin/services/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteService(
             @PathVariable Long id) {
 

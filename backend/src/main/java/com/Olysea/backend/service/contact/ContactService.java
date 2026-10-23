@@ -6,6 +6,8 @@ import com.Olysea.backend.controller.contact.dto.ContactMessageResponse;
 import com.Olysea.backend.model.ContactRequest;
 import com.Olysea.backend.repository.ContactRequestRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,8 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class ContactService {
+
+    private static final Logger log = LoggerFactory.getLogger(ContactService.class);
 
     private final ContactRequestRepository contactRepository;
 
@@ -27,6 +31,7 @@ public class ContactService {
 
         // Honeypot check: silently ignore automated spam bot submission
         if (request.website() != null && !request.website().isBlank()) {
+            log.warn("Honeypot triggered for contact submission. Simulated acceptance.");
             ContactRequest fake = new ContactRequest();
             fake.setId(-1L);
             fake.setName(request.name());
@@ -45,6 +50,7 @@ public class ContactService {
         contact.setStatus("NEW");
 
         ContactRequest saved = contactRepository.save(contact);
+        log.info("New contact request saved with id: {}", saved.getId());
 
         return toResponse(saved);
     }
@@ -64,7 +70,9 @@ public class ContactService {
     public ContactMessageResponse updateContactStatus(Long id, String status) {
         ContactRequest contact = findContact(id);
         if (status != null && !status.isBlank()) {
-            contact.setStatus(status.trim().toUpperCase());
+            String sanitizedStatus = status.trim().toUpperCase();
+            contact.setStatus(sanitizedStatus);
+            log.info("Contact request {} status updated to {}", id, sanitizedStatus);
         }
         ContactRequest updated = contactRepository.save(contact);
         return toResponse(updated);
@@ -74,6 +82,7 @@ public class ContactService {
     public void deleteContact(Long id) {
         ContactRequest contact = findContact(id);
         contactRepository.delete(contact);
+        log.info("Contact request {} deleted", id);
     }
 
     private ContactRequest findContact(Long id) {

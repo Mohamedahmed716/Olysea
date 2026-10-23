@@ -1,4 +1,3 @@
-
 package com.Olysea.backend.common.exception;
 
 import com.Olysea.backend.common.response.ApiErrorResponse;
@@ -9,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -56,11 +56,17 @@ public class GlobalExceptionHandler {
                         TooManyRequestsException ex,
                         HttpServletRequest request) {
 
-                return buildResponse(
-                                HttpStatus.TOO_MANY_REQUESTS,
+                ApiErrorResponse body = new ApiErrorResponse(
+                                Instant.now(),
+                                HttpStatus.TOO_MANY_REQUESTS.value(),
+                                HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
                                 ex.getMessage(),
-                                request,
+                                request.getRequestURI(),
                                 Map.of());
+
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                                .header(HttpHeaders.RETRY_AFTER, String.valueOf(ex.getRetryAfterSeconds()))
+                                .body(body);
         }
 
         @ExceptionHandler(MethodArgumentNotValidException.class)

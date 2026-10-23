@@ -21,7 +21,7 @@
           @if (editable()) {
             <button type="button" class="del" [attr.aria-label]="'Delete project ' + p.name" (click)="askDelete(p)">✕</button>
           }
-          <a class="clink" [href]="p.url" target="_blank" rel="noopener" draggable="false">
+          <a class="clink" [href]="p.url" target="_blank" rel="noopener noreferrer" draggable="false">
             <app-project-preview [project]="p" />
             <div class="meta">
               <div>

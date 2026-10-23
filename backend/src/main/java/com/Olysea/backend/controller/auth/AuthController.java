@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,6 +35,8 @@ import java.util.Map;
 
 @RestController
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
@@ -67,8 +71,13 @@ public class AuthController {
 
         if (loginAttemptService.isBlocked(ipKey)
                 || loginAttemptService.isBlocked(emailKey)) {
+            long retryAfter = Math.max(
+                    loginAttemptService.getRetryAfterSeconds(ipKey),
+                    loginAttemptService.getRetryAfterSeconds(emailKey));
+            log.warn("Login attempt blocked by rate limit for IP: {} and hashed-email: {}", httpRequest.getRemoteAddr(), emailKey);
             throw new TooManyRequestsException(
-                    "Too many login attempts. Try again later.");
+                    "Too many login attempts. Try again in " + retryAfter + " seconds.",
+                    retryAfter);
         }
 
         try {
@@ -95,6 +104,8 @@ public class AuthController {
             loginAttemptService.recordSuccess(ipKey);
             loginAttemptService.recordSuccess(emailKey);
 
+            log.info("Successful admin login from IP: {} for user: {}", httpRequest.getRemoteAddr(), email);
+
             return ResponseEntity.ok(
                     new LoginResponse(true, "Login successful", Map.of("email", email)));
 
@@ -103,6 +114,8 @@ public class AuthController {
 
             loginAttemptService.recordFailure(ipKey);
             loginAttemptService.recordFailure(emailKey);
+
+            log.warn("Failed admin login attempt from IP: {} for hashed-email: {}", httpRequest.getRemoteAddr(), emailKey);
 
             throw exception;
         }
