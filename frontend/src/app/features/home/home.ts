@@ -308,10 +308,11 @@ export class Home {
           this.statusKey.set(null);
           this.toast.ok(this.i18n.t('m.ok'));
         },
-        error: () => {
+        error: (err: { status?: number }) => {
           this.sending.set(false);
-          this.show('m.err', false);
-          this.toast.bad(this.i18n.t('m.err'));
+          const key = err?.status === 429 ? 'm.limit' : 'm.err';
+          this.show(key, false);
+          this.toast.bad(this.i18n.t(key));
         },
       });
   }

@@ -1,0 +1,1 @@
+var t=[`NEW`,`READ`,`REPLIED`,`ARCHIVED`];var e=[{value:`New website`,key:`o1`},{value:`Custom web application`,key:`o2`},{value:`Business digitization`,key:`o3`},{value:`UI/UX design`,key:`o4`},{value:`Improve an existing product`,key:`o5`},{value:`Not sure yet`,key:`o6`}];export{t as n,e as t};
